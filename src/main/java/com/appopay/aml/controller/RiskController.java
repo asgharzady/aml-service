@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class RiskController {
 
 
-    @PostMapping(value = "validateRegularAcc")
-    public ResponseEntity<ValidateRiskResDTO> ValidateCustomerRiskProfileRegularAccount(@RequestBody ValidateRiskRegReqDTO request ){
-        return ResponseEntity.ok().body(new ValidateRiskResDTO());
-    }
+
 
     @PostMapping(value = "validateVIPAcc")
     public ResponseEntity<ValidateRiskResDTO> ValidateCustomerRiskProfileVIPAccount(@RequestBody ValidateRiskVIPReqDTO request ){

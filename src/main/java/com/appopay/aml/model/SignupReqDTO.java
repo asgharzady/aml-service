@@ -11,5 +11,4 @@ public class SignupReqDTO {
     private String designation;
     private String timestamp;
 
-
 }

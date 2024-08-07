@@ -5,8 +5,14 @@ import lombok.Data;
 @Data
 public class ValidateRiskResDTO {
 
-    private int riskScore;
+    private String riskScore;
     private boolean signupAllowed;
-    private String rspCode;
 
+    public ValidateRiskResDTO(String riskScore, boolean signupAllowed) {
+        this.riskScore = riskScore;
+        this.signupAllowed = signupAllowed;
+    }
+
+    public ValidateRiskResDTO() {
+    }
 }

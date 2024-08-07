@@ -8,7 +8,7 @@ public class ValidateRiskRegReqDTO {
     private String customerName;
     private String countryOfOrigin;
     private boolean politicallyExposedPerson;
-    private String customerId;
+    private Long customerId;
     private String identityType;
     private String identityNumber;
 
