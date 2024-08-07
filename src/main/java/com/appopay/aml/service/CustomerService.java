@@ -1,14 +1,17 @@
 package com.appopay.aml.service;
 
+import com.appopay.aml.Exception.CustomException;
 import com.appopay.aml.entity.CountryRiskConfig;
 import com.appopay.aml.entity.Customers;
 import com.appopay.aml.model.ValidateRiskRegReqDTO;
 import com.appopay.aml.model.ValidateRiskResDTO;
+import com.appopay.aml.model.ValidateRiskVIPReqDTO;
 import com.appopay.aml.repository.CountryRiskConfigRepository;
 import com.appopay.aml.repository.CustomerRepository;
 import com.appopay.aml.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +57,7 @@ public class CustomerService {
                 countryRisk = Long.valueOf(countryRiskConfig.getRiskScore());
             if (req.isPoliticallyExposedPerson())
                 risk = (countryRisk + Constants.POLITICALLY_EXPOSED) / 2;
-            else{
+            else {
                 risk = countryRisk;
             }
             if (risk > Constants.ALLOWED_RISK)
@@ -64,5 +67,31 @@ public class CustomerService {
             return new ValidateRiskResDTO(customer.getRiskScore(), !customer.isBlocked());
         }
 
+    }
+
+    public ValidateRiskResDTO validateVIPAccount(ValidateRiskVIPReqDTO req) throws Exception {
+        Customers customer = customerRepository.findByCustomerId(req.getCustomerId());
+        if (customer == null) {
+            throw new CustomException("customer not present");
+        }
+        else{
+            if(customer.getSourceOfIncome() == null){
+                customer.setSourceOfIncome(req.getSourceOfIncome());
+                customerRepository.save(customer);
+            }
+            return new ValidateRiskResDTO(customer.getRiskScore(), !customer.isBlocked());
+        }
+    }
+
+    public String blockbyCustomerId(Long customerId,boolean block){
+        Customers customer = customerRepository.findByCustomerId(customerId);
+        if (customer == null) {
+            throw new CustomException("customer not present");
+        }
+        else{
+            customer.setBlocked(block);
+            customerRepository.save(customer);
+            return "block: "+ block;
+        }
     }
 }

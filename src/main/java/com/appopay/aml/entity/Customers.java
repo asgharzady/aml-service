@@ -19,6 +19,8 @@ public class Customers {
     private String riskScore;
     private boolean politicallyExposedPerson;
     private boolean isBlocked;
+
+    private String sourceOfIncome;
     private String identityType;
     private String identityNumber;
     private Instant createdAt;

@@ -22,6 +22,11 @@ public class CustomerController {
         return ResponseEntity.ok().body(customerService.validateRegAccount(request));
     }
 
+    @PostMapping(value = "validateVIPAcc")
+    public ResponseEntity<ValidateRiskResDTO> ValidateCustomerRiskProfileVIPAccount(@RequestBody ValidateRiskVIPReqDTO request ) throws Exception {
+        return ResponseEntity.ok().body(customerService.validateVIPAccount(request));
+    }
+
     @PostMapping(value = "record-trx")
     public ResponseEntity<RecordCustomerTrxResDTO> RecordCustomerTransactions(@RequestBody RecordCustomerTrxReqDTO request) {
         return ResponseEntity.ok().body(new RecordCustomerTrxResDTO());
@@ -38,9 +43,9 @@ public class CustomerController {
         return ResponseEntity.ok().body(customerService.findById(id));
     }
 
-    @GetMapping(value = "{id}/{opName}")
-    public ResponseEntity<BlockResDTO> BlockCustomer(@PathVariable Long id, @PathVariable String opName) {
-        return ResponseEntity.ok().body(new BlockResDTO());
+    @PutMapping(value = "block/{customerId}/{block}")
+    public ResponseEntity<String> BlockCustomer(@PathVariable Long customerId, @PathVariable boolean block) {
+        return ResponseEntity.ok().body(customerService.blockbyCustomerId(customerId,block));
     }
 
     @GetMapping(value = "aml/{id}")
