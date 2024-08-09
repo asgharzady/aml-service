@@ -2,8 +2,10 @@ package com.appopay.aml.controller;
 
 
 import com.appopay.aml.entity.Customers;
+import com.appopay.aml.entity.Transaction;
 import com.appopay.aml.model.*;
 import com.appopay.aml.service.CustomerService;
+import com.appopay.aml.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,19 +19,22 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
+    @Autowired
+    private TransactionService transactionService;
+
     @PostMapping(value = "validateRegularAcc")
     public ResponseEntity<ValidateRiskResDTO> ValidateCustomerRiskProfileRegularAccount(@RequestBody ValidateRiskRegReqDTO request) {
         return ResponseEntity.ok().body(customerService.validateRegAccount(request));
     }
 
     @PostMapping(value = "validateVIPAcc")
-    public ResponseEntity<ValidateRiskResDTO> ValidateCustomerRiskProfileVIPAccount(@RequestBody ValidateRiskVIPReqDTO request ) throws Exception {
+    public ResponseEntity<ValidateRiskResDTO> ValidateCustomerRiskProfileVIPAccount(@RequestBody ValidateRiskVIPReqDTO request) throws Exception {
         return ResponseEntity.ok().body(customerService.validateVIPAccount(request));
     }
 
     @PostMapping(value = "record-trx")
     public ResponseEntity<RecordCustomerTrxResDTO> RecordCustomerTransactions(@RequestBody RecordCustomerTrxReqDTO request) {
-        return ResponseEntity.ok().body(new RecordCustomerTrxResDTO());
+        return ResponseEntity.ok().body(transactionService.recordTrx(request));
     }
 
 
@@ -45,7 +50,7 @@ public class CustomerController {
 
     @PutMapping(value = "block/{customerId}/{block}")
     public ResponseEntity<String> BlockCustomer(@PathVariable Long customerId, @PathVariable boolean block) {
-        return ResponseEntity.ok().body(customerService.blockbyCustomerId(customerId,block));
+        return ResponseEntity.ok().body(customerService.blockbyCustomerId(customerId, block));
     }
 
     @GetMapping(value = "aml/{id}")
@@ -54,8 +59,9 @@ public class CustomerController {
     }
 
     @GetMapping(value = "transactions/{id}")
-    public ResponseEntity<CustomerTrxResDTO> getTransactions(@PathVariable Long id) {
-        return ResponseEntity.ok().body(new CustomerTrxResDTO());
+    public ResponseEntity<List<CustomerTrxResDTO>> getTransactions(@PathVariable Long id) {
+
+        return ResponseEntity.ok().body(customerService.getTransactions(id));
     }
 
 }

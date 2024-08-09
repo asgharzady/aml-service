@@ -3,6 +3,8 @@ package com.appopay.aml.entity;
 import com.appopay.aml.model.ValidateRiskRegReqDTO;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
@@ -11,26 +13,25 @@ import java.time.Instant;
 @Entity
 public class Customers {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long customerId;
     private String customerName;
     private String countryOfOrigin;
     private String riskScore;
     private boolean politicallyExposedPerson;
     private boolean isBlocked;
-
     private String sourceOfIncome;
     private String identityType;
     private String identityNumber;
+    @CreationTimestamp
     private Instant createdAt;
+    @UpdateTimestamp
     private Instant updatedAt;
 
     public Customers() {
     }
 
     public Customers(ValidateRiskRegReqDTO req,String riskScore, boolean isBlocked) {
-        this.customerId = req.getCustomerId();
+        this.id=req.getCustomerId();
         this.customerName = req.getCustomerName();
         this.countryOfOrigin = req.getCountryOfOrigin();
         this.riskScore = riskScore;

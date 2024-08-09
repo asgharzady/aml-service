@@ -5,8 +5,11 @@ import lombok.Data;
 @Data
 public class RecordCustomerTrxResDTO {
 
-    private int riskScore;
+    private String riskScore;
     private boolean transactionAllowed;
-    private int rspCode;
 
+    public RecordCustomerTrxResDTO(String riskScore, boolean transactionAllowed) {
+        this.riskScore = riskScore;
+        this.transactionAllowed = transactionAllowed;
+    }
 }

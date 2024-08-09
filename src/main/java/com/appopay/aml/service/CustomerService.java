@@ -3,11 +3,11 @@ package com.appopay.aml.service;
 import com.appopay.aml.Exception.CustomException;
 import com.appopay.aml.entity.CountryRiskConfig;
 import com.appopay.aml.entity.Customers;
-import com.appopay.aml.model.ValidateRiskRegReqDTO;
-import com.appopay.aml.model.ValidateRiskResDTO;
-import com.appopay.aml.model.ValidateRiskVIPReqDTO;
+import com.appopay.aml.entity.Transaction;
+import com.appopay.aml.model.*;
 import com.appopay.aml.repository.CountryRiskConfigRepository;
 import com.appopay.aml.repository.CustomerRepository;
+import com.appopay.aml.repository.TransactionRepository;
 import com.appopay.aml.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +15,7 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -25,6 +26,9 @@ public class CustomerService {
     @Autowired
     private CountryRiskConfigRepository countryRiskConfigRepository;
 
+    @Autowired
+    private TransactionRepository transactionRepository;
+
 
     public List<Customers> findAll() {
         List<Customers> list = customerRepository.findAll();
@@ -32,20 +36,22 @@ public class CustomerService {
     }
 
     public Customers findById(Long id) {
-        Optional<Customers> customer = customerRepository.findById(id);
-        if (customer.isPresent())
-            return customer.get();
-
+        Optional<Customers> optionalCustomers = customerRepository.findById(id);
+        if (optionalCustomers.isPresent())
+            return optionalCustomers.get();
         else {
-            throw new RuntimeException();
+            throw new CustomException("customer not found");
         }
     }
 
     public ValidateRiskResDTO validateRegAccount(ValidateRiskRegReqDTO req) {
-        Customers customer = customerRepository.findByCustomerId(req.getCustomerId());
 
-        if (customer != null) {
+        Optional<Customers> optionalCustomers = customerRepository.findById(req.getCustomerId());
+        Customers customer = null;
+
+        if (optionalCustomers.isPresent()) {
             System.out.println("customer present");
+            customer = optionalCustomers.get();
             return new ValidateRiskResDTO(customer.getRiskScore(), !customer.isBlocked());
 
         } else {
@@ -70,12 +76,15 @@ public class CustomerService {
     }
 
     public ValidateRiskResDTO validateVIPAccount(ValidateRiskVIPReqDTO req) throws Exception {
-        Customers customer = customerRepository.findByCustomerId(req.getCustomerId());
-        if (customer == null) {
+        Optional<Customers> optionalCustomers = customerRepository.findById(req.getCustomerId());
+        Customers customer = null;
+
+
+        if (optionalCustomers.isEmpty()) {
             throw new CustomException("customer not present");
-        }
-        else{
-            if(customer.getSourceOfIncome() == null){
+        } else {
+            customer = optionalCustomers.get();
+            if (customer.getSourceOfIncome() == null) {
                 customer.setSourceOfIncome(req.getSourceOfIncome());
                 customerRepository.save(customer);
             }
@@ -83,15 +92,31 @@ public class CustomerService {
         }
     }
 
-    public String blockbyCustomerId(Long customerId,boolean block){
-        Customers customer = customerRepository.findByCustomerId(customerId);
-        if (customer == null) {
+    public String blockbyCustomerId(Long customerId, boolean block) {
+        Optional<Customers> optionalCustomers = customerRepository.findById(customerId);
+        Customers customer = null;
+        if (optionalCustomers.isEmpty()) {
             throw new CustomException("customer not present");
-        }
-        else{
+        } else {
+            customer = optionalCustomers.get();
             customer.setBlocked(block);
             customerRepository.save(customer);
-            return "block: "+ block;
+            return "block: " + block;
+        }
+    }
+
+    public List<CustomerTrxResDTO> getTransactions(Long id) {
+        Optional<Customers> optionalCustomers = customerRepository.findById(id);
+        Customers customer = null;
+        if (optionalCustomers.isEmpty()) {
+            throw new CustomException("customer not found");
+        } else {
+            customer = optionalCustomers.get();
+            System.out.println("customer.getId()");
+            System.out.println(customer.getId());
+            List<Transaction> transactions = transactionRepository.findAllByCustomers(customer);
+            List<CustomerTrxResDTO> response = transactions.stream().map(Transaction::toDTO).toList();
+            return response;
         }
     }
 }

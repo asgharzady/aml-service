@@ -5,11 +5,10 @@ import lombok.Data;
 @Data
 public class RecordCustomerTrxReqDTO {
 
-    private String customerName;
     private String transactionAmount;
-    private boolean transactionType;
+    private String transactionType;
     private String transactionDescription;
-    private String customerId;
+    private Long customerId;
     private String merchantLocation;
 
 }
