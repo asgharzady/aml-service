@@ -18,10 +18,6 @@ public class TransactionRiskConfig {
     private Long monthlyFrequency;
     private Long monthlyLimit;
     private String locationFrequency;
-    @OneToOne
-    @JoinColumn(name = "country_id", nullable = false)
-    private CountryRiskConfig countryRiskConfig;
-
     @CreationTimestamp
     private Instant createdAt;
     @UpdateTimestamp
