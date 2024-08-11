@@ -60,9 +60,9 @@ public class CustomerService {
             Long risk;
             boolean isBlocked = false;
             if (countryRiskConfig != null)
-                countryRisk = Long.valueOf(countryRiskConfig.getRiskScore());
+                countryRisk = Long.valueOf(countryRiskConfig.getRiskScoreNationality());
             if (req.isPoliticallyExposedPerson())
-                risk = (countryRisk + Constants.POLITICALLY_EXPOSED) / 2;
+                risk = (countryRisk + Constants.POLITICALLY_EXPOSED);
             else {
                 risk = countryRisk;
             }
@@ -70,7 +70,7 @@ public class CustomerService {
                 isBlocked = true;
             customer = new Customers(req, risk.toString(), isBlocked);
             customerRepository.save(customer);
-            return new ValidateRiskResDTO(customer.getRiskScore(), !customer.isBlocked());
+            return new ValidateRiskResDTO(customer.getRiskScore(), true);
         }
 
     }
@@ -88,7 +88,7 @@ public class CustomerService {
                 customer.setSourceOfIncome(req.getSourceOfIncome());
                 customerRepository.save(customer);
             }
-            return new ValidateRiskResDTO(customer.getRiskScore(), !customer.isBlocked());
+            return new ValidateRiskResDTO(customer.getRiskScore(), true);
         }
     }
 
@@ -117,6 +117,20 @@ public class CustomerService {
             List<Transaction> transactions = transactionRepository.findAllByCustomers(customer);
             List<CustomerTrxResDTO> response = transactions.stream().map(Transaction::toDTO).toList();
             return response;
+        }
+    }
+
+    public CustomerAmlResDTO getAmlData(Long id){
+        Optional<Customers> optionalCustomers = customerRepository.findById(id);
+        if (optionalCustomers.isPresent()){
+            Customers customer = optionalCustomers.get();
+            CustomerAmlResDTO response = new CustomerAmlResDTO();
+            response.setRiskScore(customer.getRiskScore());
+            response.setBlocked(customer.isBlocked());
+            return response;
+        }
+        else {
+            throw new CustomException("customer not found");
         }
     }
 }

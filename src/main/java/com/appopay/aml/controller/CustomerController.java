@@ -55,7 +55,7 @@ public class CustomerController {
 
     @GetMapping(value = "aml/{id}")
     public ResponseEntity<CustomerAmlResDTO> getAMLData(@PathVariable Long id) {
-        return ResponseEntity.ok().body(new CustomerAmlResDTO());
+        return ResponseEntity.ok().body(customerService.getAmlData(id));
     }
 
     @GetMapping(value = "transactions/{id}")

@@ -1,8 +1,8 @@
 package com.appopay.aml.util;
 
 public class Constants {
-    public static final long POLITICALLY_EXPOSED = 30;
-    public static final long ALLOWED_RISK = 50;
+    public static final long POLITICALLY_EXPOSED = 5;
+    public static final long ALLOWED_RISK = 20;
 
     // Private constructor to prevent instantiation
     private Constants() {

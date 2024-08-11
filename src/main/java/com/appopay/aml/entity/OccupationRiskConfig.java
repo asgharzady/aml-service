@@ -11,6 +11,5 @@ public class OccupationRiskConfig {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String occupation;
-
     private String RiskScore;
 }

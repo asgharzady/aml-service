@@ -20,7 +20,6 @@ public class Transaction {
     private String type;
     private String description;
     private String merchantLocation;
-
     private boolean isAllowed;
 
     private boolean isFlagged;

@@ -57,7 +57,7 @@ public class TransactionService {
         CountryRiskConfig merchantCountryScore = countryRiskConfigRepository.findByCountry(req.getMerchantLocation());
         Long riskScore = 0l;
         if(merchantCountryScore != null)
-            riskScore = Long.valueOf(merchantCountryScore.getRiskScore());
+            riskScore = Long.valueOf(merchantCountryScore.getRiskScoreGeography());
         if(monthlyAmount + Long.parseLong(req.getTransactionAmount()) >transactionRiskConfig.getMonthlyLimit())
             isAllowed = false;
 
@@ -74,7 +74,7 @@ public class TransactionService {
             isAllowed = false;
 
 
-        boolean isFlagged = isAllowed;
+        boolean isFlagged = !isAllowed;
         Transaction transaction = new Transaction(req, customers,isFlagged,riskScore.toString());
 
         transactionRepository.save(transaction);

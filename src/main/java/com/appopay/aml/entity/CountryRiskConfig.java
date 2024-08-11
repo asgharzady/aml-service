@@ -13,5 +13,6 @@ public class CountryRiskConfig {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String country;
-    private String RiskScore;
+    private String RiskScoreNationality;
+    private String RiskScoreGeography;
 }
