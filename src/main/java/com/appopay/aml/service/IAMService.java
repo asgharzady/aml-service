@@ -23,7 +23,7 @@ public class IAMService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-    private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
+    private static final Logger log = LoggerFactory.getLogger(IAMService.class);
 
     public void SignUp(SignupReqDTO request) {
         IAM checkExistingUser = iamRepository.findByUserName(request.getUsername());

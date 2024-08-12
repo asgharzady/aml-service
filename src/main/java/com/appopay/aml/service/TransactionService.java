@@ -37,7 +37,7 @@ public class TransactionService {
     @Autowired
     private CountryRiskConfigRepository countryRiskConfigRepository;
 
-    private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
+    private static final Logger log = LoggerFactory.getLogger(TransactionService.class);
 
     public RecordCustomerTrxResDTO recordTrx(RecordCustomerTrxReqDTO req) {
         log.info("transaction received with cid " + req.getCustomerId());
