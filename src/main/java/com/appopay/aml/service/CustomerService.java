@@ -9,12 +9,15 @@ import com.appopay.aml.repository.CountryRiskConfigRepository;
 import com.appopay.aml.repository.CustomerRepository;
 import com.appopay.aml.repository.TransactionRepository;
 import com.appopay.aml.util.Constants;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +31,9 @@ public class CustomerService {
 
     @Autowired
     private TransactionRepository transactionRepository;
+
+    private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
+
 
 
     public List<Customers> findAll() {
@@ -45,12 +51,12 @@ public class CustomerService {
     }
 
     public ValidateRiskResDTO validateRegAccount(ValidateRiskRegReqDTO req) {
-
+        log.info("validating reg account with customer id " + req.getCustomerId());
         Optional<Customers> optionalCustomers = customerRepository.findById(req.getCustomerId());
         Customers customer = null;
 
         if (optionalCustomers.isPresent()) {
-            System.out.println("customer present");
+            log.info("customer present " + req.getCustomerId());
             customer = optionalCustomers.get();
             return new ValidateRiskResDTO(customer.getRiskScore(), !customer.isBlocked());
 
@@ -76,11 +82,13 @@ public class CustomerService {
     }
 
     public ValidateRiskResDTO validateVIPAccount(ValidateRiskVIPReqDTO req) throws Exception {
+        log.info("validating VIP account with customer id " + req.getCustomerId());
         Optional<Customers> optionalCustomers = customerRepository.findById(req.getCustomerId());
         Customers customer = null;
 
 
         if (optionalCustomers.isEmpty()) {
+            log.info("customer not present with customer id " + req.getCustomerId());
             throw new CustomException("customer not present");
         } else {
             customer = optionalCustomers.get();
@@ -93,9 +101,11 @@ public class CustomerService {
     }
 
     public String blockbyCustomerId(Long customerId, boolean block) {
+        log.info("blocking customer with customer id " + customerId);
         Optional<Customers> optionalCustomers = customerRepository.findById(customerId);
         Customers customer = null;
         if (optionalCustomers.isEmpty()) {
+            log.info("customer not present with customer id " + customerId);
             throw new CustomException("customer not present");
         } else {
             customer = optionalCustomers.get();
@@ -120,16 +130,15 @@ public class CustomerService {
         }
     }
 
-    public CustomerAmlResDTO getAmlData(Long id){
+    public CustomerAmlResDTO getAmlData(Long id) {
         Optional<Customers> optionalCustomers = customerRepository.findById(id);
-        if (optionalCustomers.isPresent()){
+        if (optionalCustomers.isPresent()) {
             Customers customer = optionalCustomers.get();
             CustomerAmlResDTO response = new CustomerAmlResDTO();
             response.setRiskScore(customer.getRiskScore());
             response.setBlocked(customer.isBlocked());
             return response;
-        }
-        else {
+        } else {
             throw new CustomException("customer not found");
         }
     }

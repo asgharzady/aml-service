@@ -5,6 +5,8 @@ import com.appopay.aml.entity.IAM;
 import com.appopay.aml.model.LoginReqDTO;
 import com.appopay.aml.model.SignupReqDTO;
 import com.appopay.aml.repository.IAMRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,11 +23,14 @@ public class IAMService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
+
     public void SignUp(SignupReqDTO request) {
         IAM checkExistingUser = iamRepository.findByUserName(request.getUsername());
         if (checkExistingUser != null) {
             throw new CustomException("username already taken !");
         } else {
+            log.info("creating account with username " + request.getUsername());
             IAM iam = new IAM();
             iam.setUserName(request.getUsername());
             iam.setPassword(passwordEncoder.encode(request.getPassword()));

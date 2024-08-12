@@ -2,7 +2,6 @@ package com.appopay.aml.controller;
 
 
 import com.appopay.aml.entity.Customers;
-import com.appopay.aml.entity.Transaction;
 import com.appopay.aml.model.*;
 import com.appopay.aml.service.CustomerService;
 import com.appopay.aml.service.TransactionService;
@@ -22,8 +21,10 @@ public class CustomerController {
     @Autowired
     private TransactionService transactionService;
 
+
     @PostMapping(value = "validateRegularAcc")
     public ResponseEntity<ValidateRiskResDTO> ValidateCustomerRiskProfileRegularAccount(@RequestBody ValidateRiskRegReqDTO request) {
+
         return ResponseEntity.ok().body(customerService.validateRegAccount(request));
     }
 

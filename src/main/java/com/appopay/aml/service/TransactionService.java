@@ -11,6 +11,8 @@ import com.appopay.aml.repository.CustomerRepository;
 import com.appopay.aml.repository.TransactionRepository;
 import com.appopay.aml.repository.TransactionRiskConfigRepository;
 import com.appopay.aml.util.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +37,10 @@ public class TransactionService {
     @Autowired
     private CountryRiskConfigRepository countryRiskConfigRepository;
 
+    private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
+
     public RecordCustomerTrxResDTO recordTrx(RecordCustomerTrxReqDTO req) {
+        log.info("transaction received with cid " + req.getCustomerId());
         boolean isAllowed = true;
         Optional<Customers> optionalCustomers = customerRepository.findById(req.getCustomerId());
         Customers customers = null;
