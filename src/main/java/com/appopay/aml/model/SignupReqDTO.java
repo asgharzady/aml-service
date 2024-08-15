@@ -8,5 +8,6 @@ public class SignupReqDTO {
     private String username;
     private String password;
     private String designation;
+    private Boolean isBlocked;
 
 }

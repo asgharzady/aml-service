@@ -1,5 +1,6 @@
 package com.appopay.aml.entity;
 
+import com.appopay.aml.model.CustomersDTO;
 import com.appopay.aml.model.ValidateRiskRegReqDTO;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -30,8 +31,8 @@ public class Customers {
     public Customers() {
     }
 
-    public Customers(ValidateRiskRegReqDTO req,String riskScore, boolean isBlocked) {
-        this.id=req.getCustomerId();
+    public Customers(ValidateRiskRegReqDTO req, String riskScore, boolean isBlocked) {
+        this.id = req.getCustomerId();
         this.customerName = req.getCustomerName();
         this.countryOfOrigin = req.getCountryOfOrigin();
         this.riskScore = riskScore;
@@ -40,6 +41,20 @@ public class Customers {
         this.identityType = req.getIdentityType();
         this.identityNumber = req.getIdentityNumber();
 
+    }
+
+    public CustomersDTO toDTO() {
+        CustomersDTO response = new CustomersDTO();
+        response.setId(this.id);
+        response.setCustomerName(this.customerName);
+        response.setCountryOfOrigin(this.countryOfOrigin);
+        response.setRiskScore(this.riskScore);
+        response.setPoliticallyExposedPerson(this.politicallyExposedPerson);
+        response.setIsBlocked(this.isBlocked);
+        response.setIdentityType(this.identityType);
+        response.setIdentityNumber(this.identityNumber);
+
+        return response;
     }
 
 

@@ -11,6 +11,7 @@ import com.appopay.aml.repository.TransactionRepository;
 import com.appopay.aml.util.Constants;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -36,15 +37,17 @@ public class CustomerService {
 
 
 
-    public List<Customers> findAll() {
-        List<Customers> list = customerRepository.findAll();
-        return list;
+    public PaginatedCustomers findAll(Pageable pageable) {
+        PaginatedCustomers response = new PaginatedCustomers();
+        response.setData(customerRepository.findAll(pageable).stream().toList());
+        response.setTotalDocuments(customerRepository.count());
+        return response;
     }
 
-    public Customers findById(Long id) {
+    public CustomersDTO findById(Long id) {
         Optional<Customers> optionalCustomers = customerRepository.findById(id);
         if (optionalCustomers.isPresent())
-            return optionalCustomers.get();
+            return optionalCustomers.get().toDTO();
         else {
             throw new CustomException("customer not found");
         }
@@ -140,6 +143,33 @@ public class CustomerService {
             return response;
         } else {
             throw new CustomException("customer not found");
+        }
+    }
+
+    public CustomersDTO updateCustomer(CustomersDTO req){
+        Optional<Customers> optionalCustomers = customerRepository.findById(req.getId());
+        Customers customer = null;
+        if (optionalCustomers.isEmpty()) {
+            throw new CustomException("customer not found");
+        } else {
+            customer = optionalCustomers.get();
+            if(req.getCustomerName() !=null)
+                customer.setCustomerName(req.getCustomerName());
+            if(req.getCountryOfOrigin() != null)
+                customer.setCountryOfOrigin(req.getCountryOfOrigin());
+            if(req.getRiskScore() != null)
+                customer.setRiskScore(req.getRiskScore());
+            if(req.getPoliticallyExposedPerson() != null)
+                customer.setPoliticallyExposedPerson(req.getPoliticallyExposedPerson());
+            if(req.getIsBlocked() != null)
+                customer.setBlocked(req.getIsBlocked());
+            if(req.getIdentityType() != null)
+                customer.setIdentityType(req.getIdentityType());
+            if(req.getIdentityNumber() != null)
+                customer.setIdentityNumber(req.getIdentityNumber());
+
+            customerRepository.save(customer);
+            return customer.toDTO();
         }
     }
 }

@@ -18,6 +18,8 @@ public class IAM {
     private String userName;
     private String password;
     private String designation;
+
+    private boolean isBlocked;
     @CreationTimestamp
     private Instant createdAt;
     @UpdateTimestamp

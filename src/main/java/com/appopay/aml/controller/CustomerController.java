@@ -6,13 +6,14 @@ import com.appopay.aml.model.*;
 import com.appopay.aml.service.CustomerService;
 import com.appopay.aml.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("customer/")
+@RequestMapping("customer")
 public class CustomerController {
 
     @Autowired
@@ -22,46 +23,48 @@ public class CustomerController {
     private TransactionService transactionService;
 
 
-    @PostMapping(value = "validateRegularAcc")
+    @PutMapping
+    public ResponseEntity<CustomersDTO> updateOne(@RequestBody CustomersDTO customers){
+        return  ResponseEntity.ok().body(customerService.updateCustomer(customers));
+    }
+    @PostMapping(value = "/validateRegularAcc")
     public ResponseEntity<ValidateRiskResDTO> ValidateCustomerRiskProfileRegularAccount(@RequestBody ValidateRiskRegReqDTO request) {
-
         return ResponseEntity.ok().body(customerService.validateRegAccount(request));
     }
 
-    @PostMapping(value = "validateVIPAcc")
+    @PostMapping(value = "/validateVIPAcc")
     public ResponseEntity<ValidateRiskResDTO> ValidateCustomerRiskProfileVIPAccount(@RequestBody ValidateRiskVIPReqDTO request) throws Exception {
         return ResponseEntity.ok().body(customerService.validateVIPAccount(request));
     }
 
-    @PostMapping(value = "record-trx")
+    @PostMapping(value = "/record-trx")
     public ResponseEntity<RecordCustomerTrxResDTO> RecordCustomerTransactions(@RequestBody RecordCustomerTrxReqDTO request) {
         return ResponseEntity.ok().body(transactionService.recordTrx(request));
     }
 
 
-    @PostMapping(value = "findAll")
-    public ResponseEntity<List<Customers>> getAllCustomers() {
-        return ResponseEntity.ok().body(customerService.findAll());
+    @PostMapping(value = "/findAll/{page}/{size}")
+    public ResponseEntity<PaginatedCustomers> getAllCustomers(@PathVariable("page") Integer page,@PathVariable("size") Integer size) {
+        return ResponseEntity.ok().body(customerService.findAll(PageRequest.of(page,size)));
     }
 
-    @GetMapping(value = "{id}")
-    public ResponseEntity<Customers> getCustomerByID(@PathVariable Long id) {
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<CustomersDTO> getCustomerByID(@PathVariable Long id) {
         return ResponseEntity.ok().body(customerService.findById(id));
     }
 
-    @PutMapping(value = "block/{customerId}/{block}")
+    @PutMapping(value = "/block/{customerId}/{block}")
     public ResponseEntity<String> BlockCustomer(@PathVariable Long customerId, @PathVariable boolean block) {
         return ResponseEntity.ok().body(customerService.blockbyCustomerId(customerId, block));
     }
 
-    @GetMapping(value = "aml/{id}")
+    @GetMapping(value = "/aml/{id}")
     public ResponseEntity<CustomerAmlResDTO> getAMLData(@PathVariable Long id) {
         return ResponseEntity.ok().body(customerService.getAmlData(id));
     }
 
-    @GetMapping(value = "transactions/{id}")
+    @GetMapping(value = "/transactions/{id}")
     public ResponseEntity<List<CustomerTrxResDTO>> getTransactions(@PathVariable Long id) {
-
         return ResponseEntity.ok().body(customerService.getTransactions(id));
     }
 
