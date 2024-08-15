@@ -72,7 +72,7 @@ public class IAMService {
 
     public PaginatedUsers getAllPaginsated(Pageable pageable){
         PaginatedUsers response = new PaginatedUsers();
-        response.setData(iamRepository.findAll().stream().toList());
+        response.setData(iamRepository.findAll(pageable).stream().toList());
         response.setTotalDocuments(iamRepository.count());
         return response;
     }
