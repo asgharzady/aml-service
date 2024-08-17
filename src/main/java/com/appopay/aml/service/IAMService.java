@@ -77,4 +77,13 @@ public class IAMService {
         return response;
     }
 
+    public IAM getByUsername(String username){
+        IAM iam = iamRepository.findByUserName(username);
+
+        if(iam == null){
+            throw new CustomException("username not found");
+        }
+        return iam;
+    }
+
 }

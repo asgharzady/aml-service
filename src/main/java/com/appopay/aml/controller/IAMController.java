@@ -37,4 +37,11 @@ public class IAMController {
     public ResponseEntity<PaginatedUsers> getAll(@PathVariable("page") Integer page,@PathVariable("size") Integer size){
         return ResponseEntity.ok(iamService.getAllPaginsated(PageRequest.of(page,size)));
     }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<IAM> getByUsername(@PathVariable("username") String username){
+        return ResponseEntity.ok(iamService.getByUsername(username));
+    }
+
+
 }
