@@ -14,6 +14,7 @@ import com.appopay.aml.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -22,6 +23,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
@@ -86,5 +88,12 @@ public class TransactionService {
 
         return new RecordCustomerTrxResDTO(riskScore.toString(),true);
 
+    }
+
+    public PaginatedTransactions getAll(Pageable pageable){
+        PaginatedTransactions response = new PaginatedTransactions();
+        response.setData(transactionRepository.findAll(pageable).stream().collect(Collectors.toList()));
+        response.setDocuments(transactionRepository.count());
+        return response;
     }
 }
