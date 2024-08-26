@@ -1,5 +1,6 @@
 package com.appopay.aml.service;
 import com.appopay.aml.Exception.CustomException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -20,10 +21,12 @@ public class S3Service {
 
     private final S3Client s3Client;
     private final String bucketName;
+    @Value("${accessKeyId}")
+    private String accessKeyId = "AKIAUFQFSYCH7HUDE4VL";
+    @Value("${secretAccessKey}")
+    private String secretAccessKey = "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";
 
     public S3Service() {
-        String accessKeyId = "AKIAUFQFSYCH7HUDE4VL";
-        String secretAccessKey = "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";
         String bucketName = "appopay-aml-frontend";
         AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKeyId, secretAccessKey);
         this.s3Client = S3Client.builder()
