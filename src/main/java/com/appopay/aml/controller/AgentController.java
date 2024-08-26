@@ -34,6 +34,11 @@ public class AgentController {
         return ResponseEntity.ok().body(agentService.getById(id));
     }
 
+    @PostMapping(value = "/findAll/{page}/{size}")
+    public ResponseEntity<PaginatedAgent> getAllAgents(@PathVariable("page") Integer page,@PathVariable("size") Integer size) {
+        return ResponseEntity.ok().body(agentService.findAll(PageRequest.of(page,size)));
+    }
+
 
 
 }

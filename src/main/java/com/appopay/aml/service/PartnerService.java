@@ -1,11 +1,15 @@
 package com.appopay.aml.service;
 
 import com.appopay.aml.Exception.CustomException;
+import com.appopay.aml.entity.Agent;
 import com.appopay.aml.entity.Partner;
+import com.appopay.aml.model.PaginatedMerchant;
+import com.appopay.aml.model.PaginatedPartner;
 import com.appopay.aml.model.PartnerDTO;
 import com.appopay.aml.repository.PartnerRepository;
 import com.appopay.aml.repository.PartnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -58,6 +62,13 @@ public class PartnerService {
             return partner.get().toDTO();
         }
         throw new CustomException("Partner not found");
+    }
+
+    public PaginatedPartner findAll(Pageable pageable) {
+        PaginatedPartner response = new PaginatedPartner();
+        response.setData(partnerRepository.findAll(pageable).stream().map(Partner::toDTO).toList());
+        response.setTotalDocuments(partnerRepository.count());
+        return response;
     }
 
 }

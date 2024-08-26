@@ -3,10 +3,7 @@ package com.appopay.aml.service;
 import com.appopay.aml.Exception.CustomException;
 import com.appopay.aml.entity.Agent;
 import com.appopay.aml.entity.IAM;
-import com.appopay.aml.model.AgentDTO;
-import com.appopay.aml.model.LoginReqDTO;
-import com.appopay.aml.model.PaginatedUsers;
-import com.appopay.aml.model.SignupReqDTO;
+import com.appopay.aml.model.*;
 import com.appopay.aml.repository.AgentRepository;
 import com.appopay.aml.repository.IAMRepository;
 import org.slf4j.Logger;
@@ -66,6 +63,13 @@ public class AgentService {
             return agent.get().toDTO();
         }
         throw new CustomException("Agent not found");
+    }
+
+    public PaginatedAgent findAll(Pageable pageable) {
+        PaginatedAgent response = new PaginatedAgent();
+        response.setData(agentRepository.findAll(pageable).stream().map(Agent::toDTO).toList());
+        response.setTotalDocuments(agentRepository.count());
+        return response;
     }
 
 }

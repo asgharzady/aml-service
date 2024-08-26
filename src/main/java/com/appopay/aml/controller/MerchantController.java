@@ -2,8 +2,10 @@ package com.appopay.aml.controller;
 
 
 import com.appopay.aml.model.MerchantDTO;
+import com.appopay.aml.model.PaginatedMerchant;
 import com.appopay.aml.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +29,11 @@ public class MerchantController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<MerchantDTO> updateOne(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(merchantService.getById(id));
+    }
+
+    @PostMapping(value = "/findAll/{page}/{size}")
+    public ResponseEntity<PaginatedMerchant> getAllMerchants(@PathVariable("page") Integer page, @PathVariable("size") Integer size) {
+        return ResponseEntity.ok().body(merchantService.findAll(PageRequest.of(page,size)));
     }
 
 
