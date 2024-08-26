@@ -4,12 +4,18 @@ package com.appopay.aml.controller;
 import com.appopay.aml.entity.Customers;
 import com.appopay.aml.model.*;
 import com.appopay.aml.service.CustomerService;
+import com.appopay.aml.service.S3Service;
 import com.appopay.aml.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -22,11 +28,11 @@ public class CustomerController {
     @Autowired
     private TransactionService transactionService;
 
-
     @PutMapping
-    public ResponseEntity<CustomersDTO> updateOne(@RequestBody CustomersDTO customers){
-        return  ResponseEntity.ok().body(customerService.updateCustomer(customers));
+    public ResponseEntity<CustomersDTO> updateOne(@RequestBody CustomersDTO customers) {
+        return ResponseEntity.ok().body(customerService.updateCustomer(customers));
     }
+
     @PostMapping(value = "/validateRegularAcc")
     public ResponseEntity<ValidateRiskResDTO> ValidateCustomerRiskProfileRegularAccount(@RequestBody ValidateRiskRegReqDTO request) {
         return ResponseEntity.ok().body(customerService.validateRegAccount(request));
@@ -44,8 +50,8 @@ public class CustomerController {
 
 
     @PostMapping(value = "/findAll/{page}/{size}")
-    public ResponseEntity<PaginatedCustomers> getAllCustomers(@PathVariable("page") Integer page,@PathVariable("size") Integer size) {
-        return ResponseEntity.ok().body(customerService.findAll(PageRequest.of(page,size)));
+    public ResponseEntity<PaginatedCustomers> getAllCustomers(@PathVariable("page") Integer page, @PathVariable("size") Integer size) {
+        return ResponseEntity.ok().body(customerService.findAll(PageRequest.of(page, size)));
     }
 
     @GetMapping(value = "/{id}")
@@ -66,6 +72,15 @@ public class CustomerController {
     @GetMapping(value = "/transactions/{id}")
     public ResponseEntity<List<CustomerTrxResDTO>> getTransactions(@PathVariable Long id) {
         return ResponseEntity.ok().body(customerService.getTransactions(id));
+    }
+
+
+    @PostMapping(value = "/upload/{customerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<String>> uploadFile(@ModelAttribute("front") @RequestParam("front") MultipartFile front,
+                                                   @ModelAttribute("back") @RequestParam("back") MultipartFile back,
+                                                   @PathVariable Long customerId) {
+
+        return ResponseEntity.ok(customerService.uploadId(front, back, customerId));
     }
 
 }

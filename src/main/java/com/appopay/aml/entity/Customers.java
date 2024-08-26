@@ -23,6 +23,8 @@ public class Customers {
     private String sourceOfIncome;
     private String identityType;
     private String identityNumber;
+    private String frontIdUrl;
+    private String backIdUrl;
     @CreationTimestamp
     private Instant createdAt;
     @UpdateTimestamp
@@ -53,6 +55,8 @@ public class Customers {
         response.setIsBlocked(this.isBlocked);
         response.setIdentityType(this.identityType);
         response.setIdentityNumber(this.identityNumber);
+        response.setFrontIdUrl(this.frontIdUrl);
+        response.setBackIdUrl(this.backIdUrl);
 
         return response;
     }

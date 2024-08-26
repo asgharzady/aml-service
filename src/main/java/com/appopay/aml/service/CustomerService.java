@@ -11,30 +11,35 @@ import com.appopay.aml.repository.TransactionRepository;
 import com.appopay.aml.util.Constants;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
-
     @Autowired
     private CountryRiskConfigRepository countryRiskConfigRepository;
-
     @Autowired
     private TransactionRepository transactionRepository;
+    @Autowired
+    private S3Service s3Service;
+
+    @Value("${s3Url}")
+    private String baseUrl;
+
 
     private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
-
 
 
     public PaginatedCustomers findAll(Pageable pageable) {
@@ -146,30 +151,56 @@ public class CustomerService {
         }
     }
 
-    public CustomersDTO updateCustomer(CustomersDTO req){
+    public CustomersDTO updateCustomer(CustomersDTO req) {
         Optional<Customers> optionalCustomers = customerRepository.findById(req.getId());
         Customers customer = null;
         if (optionalCustomers.isEmpty()) {
             throw new CustomException("customer not found");
         } else {
             customer = optionalCustomers.get();
-            if(req.getCustomerName() !=null)
+            if (req.getCustomerName() != null)
                 customer.setCustomerName(req.getCustomerName());
-            if(req.getCountryOfOrigin() != null)
+            if (req.getCountryOfOrigin() != null)
                 customer.setCountryOfOrigin(req.getCountryOfOrigin());
-            if(req.getRiskScore() != null)
+            if (req.getRiskScore() != null)
                 customer.setRiskScore(req.getRiskScore());
-            if(req.getPoliticallyExposedPerson() != null)
+            if (req.getPoliticallyExposedPerson() != null)
                 customer.setPoliticallyExposedPerson(req.getPoliticallyExposedPerson());
-            if(req.getIsBlocked() != null)
+            if (req.getIsBlocked() != null)
                 customer.setBlocked(req.getIsBlocked());
-            if(req.getIdentityType() != null)
+            if (req.getIdentityType() != null)
                 customer.setIdentityType(req.getIdentityType());
-            if(req.getIdentityNumber() != null)
+            if (req.getIdentityNumber() != null)
                 customer.setIdentityNumber(req.getIdentityNumber());
 
             customerRepository.save(customer);
             return customer.toDTO();
+        }
+    }
+
+    public List<String> uploadId(MultipartFile front,MultipartFile back,Long id) {
+        Optional<Customers> optionalCustomers = customerRepository.findById(id);
+        if (optionalCustomers.isEmpty())
+            throw new CustomException("customer not found");
+        else {
+            Customers customer = optionalCustomers.get();
+            List<String> response = new ArrayList<>();
+
+            String keyName = front.getOriginalFilename();
+            s3Service.uploadFile(front, keyName);
+            String url = baseUrl + keyName;
+            customer.setFrontIdUrl(url);
+            response.add("frontUrl: " + url);
+
+            keyName = back.getOriginalFilename();
+            s3Service.uploadFile(back, keyName);
+            url = baseUrl + keyName;
+            customer.setBackIdUrl(url);
+            response.add("backUrl: " + url);
+
+            customerRepository.save(customer);
+
+            return response;
         }
     }
 }

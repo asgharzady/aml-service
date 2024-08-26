@@ -13,5 +13,7 @@ public class CustomersDTO {
     Boolean isBlocked;
     String identityType;
     String identityNumber;
+    private String frontIdUrl;
+    private String backIdUrl;
 
 }
