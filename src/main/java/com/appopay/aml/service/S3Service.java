@@ -22,9 +22,9 @@ public class S3Service {
     private final S3Client s3Client;
     private final String bucketName;
     @Value("${accessKeyId}")
-    private String accessKeyId = "AKIAUFQFSYCH7HUDE4VL";
+    private String accessKeyId;
     @Value("${secretAccessKey}")
-    private String secretAccessKey = "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";
+    private String secretAccessKey;
 
     public S3Service() {
         String bucketName = "appopay-aml-frontend";
