@@ -21,12 +21,9 @@ public class S3Service {
 
     private final S3Client s3Client;
     private final String bucketName;
-    @Value("${accessKeyId}")
-    private String accessKeyId;
-    @Value("${secretAccessKey}")
-    private String secretAccessKey;
 
-    public S3Service() {
+    public S3Service(@Value("${accessKeyId}") String accessKeyId,
+                     @Value("${secretAccessKey}") String secretAccessKey) {
         String bucketName = "appopay-aml-frontend";
         AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKeyId, secretAccessKey);
         this.s3Client = S3Client.builder()
