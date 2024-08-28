@@ -143,7 +143,7 @@ public class CustomerService {
         }
     }
 
-    public CustomerAmlResDTO getAmlData(Long id) {
+    public CustomerAmlResDTO getAmlData(String id) {
         Optional<Customers> optionalCustomers = customerRepository.findById(id);
         if (optionalCustomers.isPresent()) {
             Customers customer = optionalCustomers.get();

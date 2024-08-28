@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class CustomersDTO {
 
-    Long id;
+    String id;
     String customerName;
     String countryOfOrigin;
     String riskStatus;

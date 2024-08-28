@@ -15,7 +15,7 @@ import java.util.List;
 @Entity
 public class Customers {
     @Id
-    private Long id;
+    private String id;
     private String customerName;
     private String countryOfOrigin;
     private String riskStatus;
