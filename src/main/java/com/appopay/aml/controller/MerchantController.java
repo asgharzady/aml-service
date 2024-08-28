@@ -28,7 +28,7 @@ public class MerchantController {
         return ResponseEntity.ok().body(merchantService.updateOne(request));
     }
 
-    @PutMapping(value = "/block/{mercahntId}/{block}")
+    @PutMapping(value = "/block/{merchantId}/{block}")
     public ResponseEntity<String> BlockMerchant(@PathVariable Long merchantId, @PathVariable boolean block) {
         return ResponseEntity.ok().body(merchantService.blockbyId(merchantId, block));
     }
