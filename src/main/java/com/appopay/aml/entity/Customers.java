@@ -34,15 +34,14 @@ public class Customers {
     }
 
     public Customers(ValidateRiskRegReqDTO req, String riskScore, boolean isBlocked) {
-        this.id = req.getCustomerId();
-        this.customerName = req.getCustomerName();
+        this.id = req.getId();
+        this.customerName = req.getName();
         this.countryOfOrigin = req.getCountryOfOrigin();
         this.riskScore = riskScore;
         this.politicallyExposedPerson = req.isPoliticallyExposedPerson();
         this.isBlocked = isBlocked;
         this.identityType = req.getIdentityType();
         this.identityNumber = req.getIdentityNumber();
-
     }
 
     public CustomersDTO toDTO() {

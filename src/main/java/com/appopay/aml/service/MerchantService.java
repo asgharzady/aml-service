@@ -1,12 +1,14 @@
 package com.appopay.aml.service;
 
 import com.appopay.aml.Exception.CustomException;
-import com.appopay.aml.entity.Agent;
+import com.appopay.aml.entity.CountryRiskConfig;
 import com.appopay.aml.entity.Merchant;
-import com.appopay.aml.model.MerchantDTO;
-import com.appopay.aml.model.PaginatedAgent;
-import com.appopay.aml.model.PaginatedMerchant;
+import com.appopay.aml.model.*;
+import com.appopay.aml.repository.CountryRiskConfigRepository;
 import com.appopay.aml.repository.MerchantRepository;
+import com.appopay.aml.util.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,11 @@ public class MerchantService {
 
     @Autowired
     private MerchantRepository merchantRepository;
+
+    @Autowired
+    private CountryRiskConfigRepository countryRiskConfigRepository;
+
+    private static final Logger log = LoggerFactory.getLogger(MerchantService.class);
 
     public MerchantDTO createMerchant(MerchantDTO merchantDTO) {
         if (merchantDTO.getId() != null) {
@@ -38,8 +45,8 @@ public class MerchantService {
 
         Merchant merchant = optionalMerchant.get();
 
-        if (merchantDTO.getCustomerName() != null)
-            merchant.setCustomerName(merchantDTO.getCustomerName());
+        if (merchantDTO.getName() != null)
+            merchant.setName(merchantDTO.getName());
         if (merchantDTO.getCountryOfOrigin() != null)
             merchant.setCountryOfOrigin(merchant.getCountryOfOrigin());
         if (merchantDTO.getRiskScore() != null)
@@ -68,6 +75,35 @@ public class MerchantService {
         response.setData(merchantRepository.findAll(pageable).stream().map(Merchant::toDTO).toList());
         response.setTotalDocuments(merchantRepository.count());
         return response;
+    }
+
+    public ValidateRiskResDTO validateRegAccount(ValidateRiskRegReqDTO req) {
+        Optional<Merchant> optionalMerchant = merchantRepository.findById(req.getId());
+        Merchant merchant = null;
+        if (optionalMerchant.isPresent()) {
+            log.info("merchant present " + req.getId());
+            merchant = optionalMerchant.get();
+            return new ValidateRiskResDTO(merchant.getRiskScore(), !merchant.isBlocked());
+
+        } else {
+            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountry(req.getCountryOfOrigin());
+            Long countryRisk = 0L;
+            Long risk;
+            boolean isBlocked = false;
+            if (countryRiskConfig != null)
+                countryRisk = Long.valueOf(countryRiskConfig.getRiskScoreNationality());
+            if (req.isPoliticallyExposedPerson())
+                risk = (countryRisk + Constants.POLITICALLY_EXPOSED);
+            else {
+                risk = countryRisk;
+            }
+            if (risk > Constants.ALLOWED_RISK)
+                isBlocked = true;
+            merchant = new Merchant(req, risk.toString(), isBlocked);
+            merchantRepository.save(merchant);
+            return new ValidateRiskResDTO(merchant.getRiskScore(), true);
+        }
+
     }
 
 }

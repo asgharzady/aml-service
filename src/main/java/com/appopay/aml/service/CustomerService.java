@@ -59,12 +59,12 @@ public class CustomerService {
     }
 
     public ValidateRiskResDTO validateRegAccount(ValidateRiskRegReqDTO req) {
-        log.info("validating reg account with customer id " + req.getCustomerId());
-        Optional<Customers> optionalCustomers = customerRepository.findById(req.getCustomerId());
+        log.info("validating reg account with customer id " + req.getId());
+        Optional<Customers> optionalCustomers = customerRepository.findById(req.getId());
         Customers customer = null;
 
         if (optionalCustomers.isPresent()) {
-            log.info("customer present " + req.getCustomerId());
+            log.info("customer present " + req.getId());
             customer = optionalCustomers.get();
             return new ValidateRiskResDTO(customer.getRiskScore(), !customer.isBlocked());
 

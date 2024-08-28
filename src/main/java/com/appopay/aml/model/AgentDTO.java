@@ -10,7 +10,7 @@ import lombok.Data;
 public class AgentDTO {
 
     Long id;
-    String customerName;
+    String name;
     String countryOfOrigin;
     String riskScore;
     Boolean politicallyExposedPerson;
@@ -21,7 +21,7 @@ public class AgentDTO {
     public Agent toEntity(){
         Agent agent = new Agent();
         agent.setId(this.id);
-        agent.setCustomerName(this.customerName);
+        agent.setName(this.name);
         agent.setCountryOfOrigin(this.countryOfOrigin);
         agent.setRiskScore(this.riskScore);
         agent.setPoliticallyExposedPerson(this.politicallyExposedPerson);

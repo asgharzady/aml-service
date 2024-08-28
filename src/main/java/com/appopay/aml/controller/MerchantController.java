@@ -3,6 +3,8 @@ package com.appopay.aml.controller;
 
 import com.appopay.aml.model.MerchantDTO;
 import com.appopay.aml.model.PaginatedMerchant;
+import com.appopay.aml.model.ValidateRiskRegReqDTO;
+import com.appopay.aml.model.ValidateRiskResDTO;
 import com.appopay.aml.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +26,10 @@ public class MerchantController {
     @PutMapping(value = "/")
     public ResponseEntity<MerchantDTO> updateOne(@RequestBody MerchantDTO request) {
         return ResponseEntity.ok().body(merchantService.updateOne(request));
+    }
+    @PostMapping(value = "/validateRegularAcc")
+    public ResponseEntity<ValidateRiskResDTO> createRegularMerchant(@RequestBody ValidateRiskRegReqDTO request) {
+        return ResponseEntity.ok().body(merchantService.validateRegAccount(request));
     }
 
     @GetMapping(value = "/{id}")

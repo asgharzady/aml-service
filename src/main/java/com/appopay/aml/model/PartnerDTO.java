@@ -8,7 +8,7 @@ import lombok.Data;
 public class PartnerDTO {
 
     Long id;
-    String customerName;
+    String name;
     String countryOfOrigin;
     String riskScore;
     Boolean politicallyExposedPerson;
@@ -19,7 +19,7 @@ public class PartnerDTO {
     public Partner toEntity(){
         Partner partner = new Partner();
         partner.setId(this.id);
-        partner.setCustomerName(this.customerName);
+        partner.setName(this.name);
         partner.setCountryOfOrigin(this.countryOfOrigin);
         partner.setRiskScore(this.riskScore);
         partner.setPoliticallyExposedPerson(this.politicallyExposedPerson);

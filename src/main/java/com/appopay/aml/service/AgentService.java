@@ -2,10 +2,14 @@ package com.appopay.aml.service;
 
 import com.appopay.aml.Exception.CustomException;
 import com.appopay.aml.entity.Agent;
+import com.appopay.aml.entity.CountryRiskConfig;
 import com.appopay.aml.entity.IAM;
+import com.appopay.aml.entity.Merchant;
 import com.appopay.aml.model.*;
 import com.appopay.aml.repository.AgentRepository;
+import com.appopay.aml.repository.CountryRiskConfigRepository;
 import com.appopay.aml.repository.IAMRepository;
+import com.appopay.aml.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,9 @@ public class AgentService {
     @Autowired
     private AgentRepository agentRepository;
 
+    @Autowired
+    private CountryRiskConfigRepository countryRiskConfigRepository;
+    private static final Logger log = LoggerFactory.getLogger(AgentService.class);
     public AgentDTO createAgent(AgentDTO agentDTO) {
         if (agentDTO.getId() != null) {
             throw new CustomException("new agent can not have ID");
@@ -40,8 +47,8 @@ public class AgentService {
 
         Agent agent = optionalAgent.get();
 
-        if (agentDTO.getCustomerName() != null)
-            agent.setCustomerName(agentDTO.getCustomerName());
+        if (agentDTO.getName() != null)
+            agent.setName(agentDTO.getName());
         if (agentDTO.getCountryOfOrigin() != null)
             agent.setCountryOfOrigin(agent.getCountryOfOrigin());
         if (agentDTO.getRiskScore() != null)
@@ -71,5 +78,35 @@ public class AgentService {
         response.setTotalDocuments(agentRepository.count());
         return response;
     }
+
+    public ValidateRiskResDTO validateRegAccount(ValidateRiskRegReqDTO req) {
+        Optional<Agent> optionalAgent = agentRepository.findById(req.getId());
+        Agent agent = null;
+        if (optionalAgent.isPresent()) {
+            log.info("agent present " + req.getId());
+            agent = optionalAgent.get();
+            return new ValidateRiskResDTO(agent.getRiskScore(), !agent.isBlocked());
+
+        } else {
+            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountry(req.getCountryOfOrigin());
+            Long countryRisk = 0L;
+            Long risk;
+            boolean isBlocked = false;
+            if (countryRiskConfig != null)
+                countryRisk = Long.valueOf(countryRiskConfig.getRiskScoreNationality());
+            if (req.isPoliticallyExposedPerson())
+                risk = (countryRisk + Constants.POLITICALLY_EXPOSED);
+            else {
+                risk = countryRisk;
+            }
+            if (risk > Constants.ALLOWED_RISK)
+                isBlocked = true;
+            agent = new Agent(req, risk.toString(), isBlocked);
+            agentRepository.save(agent);
+            return new ValidateRiskResDTO(agent.getRiskScore(), true);
+        }
+
+    }
+
 
 }

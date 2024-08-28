@@ -17,7 +17,7 @@ public class Agent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String customerName;
+    private String name;
     private String countryOfOrigin;
     private String riskScore;
     private boolean politicallyExposedPerson;
@@ -32,10 +32,21 @@ public class Agent {
     public Agent() {
     }
 
+    public Agent(ValidateRiskRegReqDTO req, String riskScore, boolean isBlocked) {
+        this.id = req.getId();
+        this.name = req.getName();
+        this.countryOfOrigin = req.getCountryOfOrigin();
+        this.riskScore = riskScore;
+        this.politicallyExposedPerson = req.isPoliticallyExposedPerson();
+        this.isBlocked = isBlocked;
+        this.identityType = req.getIdentityType();
+        this.identityNumber = req.getIdentityNumber();
+    }
+
     public AgentDTO toDTO() {
         AgentDTO response = new AgentDTO();
         response.setId(this.id);
-        response.setCustomerName(this.customerName);
+        response.setName(this.name);
         response.setCountryOfOrigin(this.countryOfOrigin);
         response.setRiskScore(this.riskScore);
         response.setPoliticallyExposedPerson(this.politicallyExposedPerson);

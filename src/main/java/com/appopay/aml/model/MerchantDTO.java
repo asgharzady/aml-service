@@ -8,7 +8,7 @@ import lombok.Data;
 public class MerchantDTO {
 
     Long id;
-    String customerName;
+    String name;
     String countryOfOrigin;
     String riskScore;
     Boolean politicallyExposedPerson;
@@ -19,7 +19,7 @@ public class MerchantDTO {
     public Merchant toEntity(){
         Merchant merchant = new Merchant();
         merchant.setId(this.id);
-        merchant.setCustomerName(this.customerName);
+        merchant.setName(this.name);
         merchant.setCountryOfOrigin(this.countryOfOrigin);
         merchant.setRiskScore(this.riskScore);
         merchant.setPoliticallyExposedPerson(this.politicallyExposedPerson);

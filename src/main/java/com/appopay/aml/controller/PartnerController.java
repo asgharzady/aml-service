@@ -1,9 +1,7 @@
 package com.appopay.aml.controller;
 
 
-import com.appopay.aml.model.PaginatedMerchant;
-import com.appopay.aml.model.PaginatedPartner;
-import com.appopay.aml.model.PartnerDTO;
+import com.appopay.aml.model.*;
 import com.appopay.aml.service.PartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +23,11 @@ public class PartnerController {
     @PutMapping(value = "/")
     public ResponseEntity<PartnerDTO> updateOne(@RequestBody PartnerDTO request) {
         return ResponseEntity.ok().body(partnerService.updateOne(request));
+    }
+
+    @PostMapping(value = "/validateRegularAcc")
+    public ResponseEntity<ValidateRiskResDTO> createRegularPartner(@RequestBody ValidateRiskRegReqDTO request) {
+        return ResponseEntity.ok().body(partnerService.validateRegAccount(request));
     }
 
     @GetMapping(value = "/{id}")
