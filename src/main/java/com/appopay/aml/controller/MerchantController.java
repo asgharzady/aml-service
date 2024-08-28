@@ -27,10 +27,6 @@ public class MerchantController {
     public ResponseEntity<MerchantDTO> updateOne(@RequestBody MerchantDTO request) {
         return ResponseEntity.ok().body(merchantService.updateOne(request));
     }
-    @PostMapping(value = "/validateRegularAcc")
-    public ResponseEntity<ValidateRiskResDTO> createRegularMerchant(@RequestBody ValidateRiskRegReqDTO request) {
-        return ResponseEntity.ok().body(merchantService.validateRegAccount(request));
-    }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<MerchantDTO> updateOne(@PathVariable("id") Long id) {

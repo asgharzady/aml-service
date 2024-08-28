@@ -3,6 +3,7 @@ package com.appopay.aml.service;
 import com.appopay.aml.Exception.CustomException;
 import com.appopay.aml.entity.CountryRiskConfig;
 import com.appopay.aml.entity.Merchant;
+import com.appopay.aml.entity.Merchant;
 import com.appopay.aml.model.*;
 import com.appopay.aml.repository.CountryRiskConfigRepository;
 import com.appopay.aml.repository.MerchantRepository;
@@ -27,10 +28,25 @@ public class MerchantService {
     private static final Logger log = LoggerFactory.getLogger(MerchantService.class);
 
     public MerchantDTO createMerchant(MerchantDTO merchantDTO) {
+        Merchant merchant = null;
         if (merchantDTO.getId() != null) {
             throw new CustomException("new merchant can not have ID");
+        } else {
+            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountry(merchantDTO.getCountryOfOrigin());
+            Long countryRisk = 0L;
+            boolean isBlocked = false;
+            if (countryRiskConfig != null)
+                countryRisk = Long.valueOf(countryRiskConfig.getRiskScoreNationality());
+            if (merchantDTO.getPoliticallyExposedPerson())
+                merchantDTO.setRiskScore(String.valueOf(countryRisk + Constants.POLITICALLY_EXPOSED));
+            else {
+                merchantDTO.setRiskScore(String.valueOf(countryRisk));
+            }
+            if (Long.parseLong(merchantDTO.getRiskScore()) > Constants.ALLOWED_RISK)
+                isBlocked = true;
+            merchant = new Merchant(merchantDTO, isBlocked);
+            return merchantRepository.save(merchant).toDTO();
         }
-        return merchantRepository.save(merchantDTO.toEntity()).toDTO();
     }
 
     public MerchantDTO updateOne(MerchantDTO merchantDTO) {
@@ -62,9 +78,9 @@ public class MerchantService {
         return merchantRepository.save(merchant).toDTO();
     }
 
-    public MerchantDTO getById(Long id){
+    public MerchantDTO getById(Long id) {
         Optional<Merchant> merchant = merchantRepository.findById(id);
-        if(merchant.isPresent()){
+        if (merchant.isPresent()) {
             return merchant.get().toDTO();
         }
         throw new CustomException("Merchant not found");
@@ -75,35 +91,6 @@ public class MerchantService {
         response.setData(merchantRepository.findAll(pageable).stream().map(Merchant::toDTO).toList());
         response.setTotalDocuments(merchantRepository.count());
         return response;
-    }
-
-    public ValidateRiskResDTO validateRegAccount(ValidateRiskRegReqDTO req) {
-        Optional<Merchant> optionalMerchant = merchantRepository.findById(req.getId());
-        Merchant merchant = null;
-        if (optionalMerchant.isPresent()) {
-            log.info("merchant present " + req.getId());
-            merchant = optionalMerchant.get();
-            return new ValidateRiskResDTO(merchant.getRiskScore(), !merchant.isBlocked());
-
-        } else {
-            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountry(req.getCountryOfOrigin());
-            Long countryRisk = 0L;
-            Long risk;
-            boolean isBlocked = false;
-            if (countryRiskConfig != null)
-                countryRisk = Long.valueOf(countryRiskConfig.getRiskScoreNationality());
-            if (req.isPoliticallyExposedPerson())
-                risk = (countryRisk + Constants.POLITICALLY_EXPOSED);
-            else {
-                risk = countryRisk;
-            }
-            if (risk > Constants.ALLOWED_RISK)
-                isBlocked = true;
-            merchant = new Merchant(req, risk.toString(), isBlocked);
-            merchantRepository.save(merchant);
-            return new ValidateRiskResDTO(merchant.getRiskScore(), true);
-        }
-
     }
 
 }

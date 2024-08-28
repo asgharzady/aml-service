@@ -2,6 +2,7 @@ package com.appopay.aml.entity;
 
 import com.appopay.aml.model.CustomersDTO;
 import com.appopay.aml.model.MerchantDTO;
+import com.appopay.aml.model.MerchantDTO;
 import com.appopay.aml.model.ValidateRiskRegReqDTO;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -32,12 +33,12 @@ public class Merchant {
     public Merchant() {
     }
 
-    public Merchant(ValidateRiskRegReqDTO req, String riskScore, boolean isBlocked) {
+    public Merchant(MerchantDTO req, boolean isBlocked) {
         this.id = req.getId();
         this.name = req.getName();
         this.countryOfOrigin = req.getCountryOfOrigin();
-        this.riskScore = riskScore;
-        this.politicallyExposedPerson = req.isPoliticallyExposedPerson();
+        this.riskScore = req.getRiskScore();
+        this.politicallyExposedPerson = req.getPoliticallyExposedPerson();
         this.isBlocked = isBlocked;
         this.identityType = req.getIdentityType();
         this.identityNumber = req.getIdentityNumber();

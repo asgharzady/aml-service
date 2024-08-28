@@ -28,10 +28,25 @@ public class PartnerService {
     private static final Logger log = LoggerFactory.getLogger(PartnerService.class);
 
     public PartnerDTO createPartner(PartnerDTO partnerDTO) {
+        Partner partner = null;
         if (partnerDTO.getId() != null) {
             throw new CustomException("new partner can not have ID");
+        } else {
+            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountry(partnerDTO.getCountryOfOrigin());
+            Long countryRisk = 0L;
+            boolean isBlocked = false;
+            if (countryRiskConfig != null)
+                countryRisk = Long.valueOf(countryRiskConfig.getRiskScoreNationality());
+            if (partnerDTO.getPoliticallyExposedPerson())
+                partnerDTO.setRiskScore(String.valueOf(countryRisk + Constants.POLITICALLY_EXPOSED));
+            else {
+                partnerDTO.setRiskScore(String.valueOf(countryRisk));
+            }
+            if (Long.parseLong(partnerDTO.getRiskScore()) > Constants.ALLOWED_RISK)
+                isBlocked = true;
+            partner = new Partner(partnerDTO, isBlocked);
+            return partnerRepository.save(partner).toDTO();
         }
-        return partnerRepository.save(partnerDTO.toEntity()).toDTO();
     }
 
     public PartnerDTO updateOne(PartnerDTO partnerDTO) {
@@ -76,35 +91,6 @@ public class PartnerService {
         response.setData(partnerRepository.findAll(pageable).stream().map(Partner::toDTO).toList());
         response.setTotalDocuments(partnerRepository.count());
         return response;
-    }
-
-    public ValidateRiskResDTO validateRegAccount(ValidateRiskRegReqDTO req) {
-        Optional<Partner> optionalPartner = partnerRepository.findById(req.getId());
-        Partner partner = null;
-        if (optionalPartner.isPresent()) {
-            log.info("partner present " + req.getId());
-            partner = optionalPartner.get();
-            return new ValidateRiskResDTO(partner.getRiskScore(), !partner.isBlocked());
-
-        } else {
-            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountry(req.getCountryOfOrigin());
-            Long countryRisk = 0L;
-            Long risk;
-            boolean isBlocked = false;
-            if (countryRiskConfig != null)
-                countryRisk = Long.valueOf(countryRiskConfig.getRiskScoreNationality());
-            if (req.isPoliticallyExposedPerson())
-                risk = (countryRisk + Constants.POLITICALLY_EXPOSED);
-            else {
-                risk = countryRisk;
-            }
-            if (risk > Constants.ALLOWED_RISK)
-                isBlocked = true;
-            partner = new Partner(req, risk.toString(), isBlocked);
-            partnerRepository.save(partner);
-            return new ValidateRiskResDTO(partner.getRiskScore(), true);
-        }
-
     }
 
 }

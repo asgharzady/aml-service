@@ -25,10 +25,6 @@ public class PartnerController {
         return ResponseEntity.ok().body(partnerService.updateOne(request));
     }
 
-    @PostMapping(value = "/validateRegularAcc")
-    public ResponseEntity<ValidateRiskResDTO> createRegularPartner(@RequestBody ValidateRiskRegReqDTO request) {
-        return ResponseEntity.ok().body(partnerService.validateRegAccount(request));
-    }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<PartnerDTO> updateOne(@PathVariable("id") Long id) {

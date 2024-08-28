@@ -28,10 +28,6 @@ public class AgentController {
     public ResponseEntity<AgentDTO> updateOne(@RequestBody AgentDTO request) {
         return ResponseEntity.ok().body(agentService.updateOne(request));
     }
-    @PostMapping(value = "/validateRegularAcc")
-    public ResponseEntity<ValidateRiskResDTO> createRegularAgent(@RequestBody ValidateRiskRegReqDTO request) {
-        return ResponseEntity.ok().body(agentService.validateRegAccount(request));
-    }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<AgentDTO> updateOne(@PathVariable("id") Long id) {
