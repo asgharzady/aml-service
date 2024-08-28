@@ -2,6 +2,7 @@ package com.appopay.aml.controller;
 
 
 import com.appopay.aml.entity.Customers;
+import com.appopay.aml.entity.IdCard;
 import com.appopay.aml.model.*;
 import com.appopay.aml.service.CustomerService;
 import com.appopay.aml.service.S3Service;
@@ -76,11 +77,13 @@ public class CustomerController {
 
 
     @PostMapping(value = "/upload/{customerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<List<String>> uploadFile(@ModelAttribute("front") @RequestParam("front") MultipartFile front,
-                                                   @ModelAttribute("back") @RequestParam("back") MultipartFile back,
-                                                   @PathVariable Long customerId) {
+    public ResponseEntity<List<String>> uploadFile(@ModelAttribute()  UploadIdDTO uploadIdDTO) {
 
-        return ResponseEntity.ok(customerService.uploadId(front, back, customerId));
+        return ResponseEntity.ok(customerService.uploadId(uploadIdDTO.getFront(), uploadIdDTO.getBack(), uploadIdDTO));
     }
 
+    @GetMapping(value = "idCard/{customerId}")
+    public ResponseEntity<IdCard> getIdCard(@PathVariable Long customerId){
+        return ResponseEntity.ok(customerService.getIdCard(customerId));
+    }
 }

@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.List;
 
 @Table(name = "customers")
 @Data
@@ -17,14 +18,17 @@ public class Customers {
     private Long id;
     private String customerName;
     private String countryOfOrigin;
+    private String riskStatus;
     private String riskScore;
     private boolean politicallyExposedPerson;
     private boolean isBlocked;
     private String sourceOfIncome;
     private String identityType;
     private String identityNumber;
-    private String frontIdUrl;
-    private String backIdUrl;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "customerId")
+    private List<IdCard> idCards;
     @CreationTimestamp
     private Instant createdAt;
     @UpdateTimestamp
@@ -49,14 +53,12 @@ public class Customers {
         response.setId(this.id);
         response.setCustomerName(this.customerName);
         response.setCountryOfOrigin(this.countryOfOrigin);
+        response.setRiskStatus(this.riskStatus);
         response.setRiskScore(this.riskScore);
         response.setPoliticallyExposedPerson(this.politicallyExposedPerson);
         response.setIsBlocked(this.isBlocked);
         response.setIdentityType(this.identityType);
         response.setIdentityNumber(this.identityNumber);
-        response.setFrontIdUrl(this.frontIdUrl);
-        response.setBackIdUrl(this.backIdUrl);
-
         return response;
     }
 

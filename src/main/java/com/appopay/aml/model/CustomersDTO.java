@@ -8,12 +8,11 @@ public class CustomersDTO {
     Long id;
     String customerName;
     String countryOfOrigin;
+    String riskStatus;
     String riskScore;
     Boolean politicallyExposedPerson;
     Boolean isBlocked;
     String identityType;
     String identityNumber;
-    private String frontIdUrl;
-    private String backIdUrl;
 
 }

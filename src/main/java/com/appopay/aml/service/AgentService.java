@@ -1,9 +1,7 @@
 package com.appopay.aml.service;
 
 import com.appopay.aml.Exception.CustomException;
-import com.appopay.aml.entity.Agent;
-import com.appopay.aml.entity.CountryRiskConfig;
-import com.appopay.aml.entity.IAM;
+import com.appopay.aml.entity.*;
 import com.appopay.aml.entity.Agent;
 import com.appopay.aml.model.*;
 import com.appopay.aml.repository.AgentRepository;
@@ -33,7 +31,7 @@ public class AgentService {
         if (agentDTO.getId() != null) {
             throw new CustomException("new agent can not have ID");
         } else {
-            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountry(agentDTO.getCountryOfOrigin());
+            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountryIgnoreCase(agentDTO.getCountryOfOrigin());
             Long countryRisk = 0L;
             boolean isBlocked = false;
             if (countryRiskConfig != null)
@@ -66,6 +64,8 @@ public class AgentService {
             agent.setName(agentDTO.getName());
         if (agentDTO.getCountryOfOrigin() != null)
             agent.setCountryOfOrigin(agent.getCountryOfOrigin());
+        if (agentDTO.getRiskStatus() != null)
+            agent.setRiskStatus(agentDTO.getRiskStatus());
         if (agentDTO.getRiskScore() != null)
             agent.setRiskScore(agent.getRiskScore());
         if (agentDTO.getPoliticallyExposedPerson() != null)
@@ -77,6 +77,21 @@ public class AgentService {
         if (agentDTO.getIdentityNumber() != null)
             agent.setIdentityNumber(agentDTO.getIdentityNumber());
         return agentRepository.save(agent).toDTO();
+    }
+
+    public String blockbyId(Long agentId, boolean block) {
+        log.info("blocking agent with agent id " + agentId);
+        Optional<Agent> optionalAgent = agentRepository.findById(agentId);
+        Agent agent = null;
+        if (optionalAgent.isEmpty()) {
+            log.info("agent not present with agent id " + agentId);
+            throw new CustomException("agent not present");
+        } else {
+            agent = optionalAgent.get();
+            agent.setBlocked(block);
+            agentRepository.save(agent);
+            return "block: " + block;
+        }
     }
 
     public AgentDTO getById(Long id){

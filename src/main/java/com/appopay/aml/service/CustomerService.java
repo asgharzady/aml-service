@@ -3,10 +3,12 @@ package com.appopay.aml.service;
 import com.appopay.aml.Exception.CustomException;
 import com.appopay.aml.entity.CountryRiskConfig;
 import com.appopay.aml.entity.Customers;
+import com.appopay.aml.entity.IdCard;
 import com.appopay.aml.entity.Transaction;
 import com.appopay.aml.model.*;
 import com.appopay.aml.repository.CountryRiskConfigRepository;
 import com.appopay.aml.repository.CustomerRepository;
+import com.appopay.aml.repository.IdRepository;
 import com.appopay.aml.repository.TransactionRepository;
 import com.appopay.aml.util.Constants;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,9 @@ public class CustomerService {
     private CountryRiskConfigRepository countryRiskConfigRepository;
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @Autowired
+    private IdRepository idRepository;
     @Autowired
     private S3Service s3Service;
 
@@ -69,7 +74,7 @@ public class CustomerService {
             return new ValidateRiskResDTO(customer.getRiskScore(), !customer.isBlocked());
 
         } else {
-            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountry(req.getCountryOfOrigin());
+            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountryIgnoreCase(req.getCountryOfOrigin());
             Long countryRisk = 0L;
             Long risk;
             boolean isBlocked = false;
@@ -162,6 +167,8 @@ public class CustomerService {
                 customer.setCustomerName(req.getCustomerName());
             if (req.getCountryOfOrigin() != null)
                 customer.setCountryOfOrigin(req.getCountryOfOrigin());
+            if (req.getRiskStatus() != null)
+                customer.setRiskStatus(req.getRiskStatus());
             if (req.getRiskScore() != null)
                 customer.setRiskScore(req.getRiskScore());
             if (req.getPoliticallyExposedPerson() != null)
@@ -178,29 +185,47 @@ public class CustomerService {
         }
     }
 
-    public List<String> uploadId(MultipartFile front,MultipartFile back,Long id) {
-        Optional<Customers> optionalCustomers = customerRepository.findById(id);
+    public List<String> uploadId(MultipartFile front, MultipartFile back, UploadIdDTO request) {
+        Optional<Customers> optionalCustomers = customerRepository.findById(request.getCustomerId());
         if (optionalCustomers.isEmpty())
             throw new CustomException("customer not found");
         else {
             Customers customer = optionalCustomers.get();
             List<String> response = new ArrayList<>();
+            IdCard idCard = new IdCard();
 
             String keyName = front.getOriginalFilename();
             s3Service.uploadFile(front, keyName);
             String url = baseUrl + keyName;
-            customer.setFrontIdUrl(url);
+            idCard.setFrontIdUrl(url);
             response.add("frontUrl: " + url);
 
             keyName = back.getOriginalFilename();
             s3Service.uploadFile(back, keyName);
             url = baseUrl + keyName;
-            customer.setBackIdUrl(url);
+            idCard.setBackIdUrl(url);
             response.add("backUrl: " + url);
 
+            idCard.setFirstName(request.getFirstName());
+            idCard.setLastName(request.getLastName());
+            idCard.setExpiryDate(request.getExpiryDate());
+            customer.setIdCards(new ArrayList<>(List.of(idCard)));
             customerRepository.save(customer);
 
             return response;
+        }
+    }
+
+    public IdCard getIdCard(Long customerId){
+        Optional<Customers> optionalCustomers = customerRepository.findById(customerId);
+        if (optionalCustomers.isPresent()){
+            IdCard idCard = optionalCustomers.get().getIdCards().get(0);
+            if(idCard == null)
+                throw new CustomException("id not found");
+            return idCard;
+        }
+        else {
+            throw new CustomException("customer not found");
         }
     }
 }

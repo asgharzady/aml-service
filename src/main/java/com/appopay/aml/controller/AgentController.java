@@ -29,6 +29,11 @@ public class AgentController {
         return ResponseEntity.ok().body(agentService.updateOne(request));
     }
 
+    @PutMapping(value = "/block/{agentId}/{block}")
+    public ResponseEntity<String> BlockAgent(@PathVariable Long agentId, @PathVariable boolean block) {
+        return ResponseEntity.ok().body(agentService.blockbyId(agentId, block));
+    }
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<AgentDTO> updateOne(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(agentService.getById(id));

@@ -61,7 +61,7 @@ public class TransactionService {
         Long monthlyAmount = monthlyTransactions.stream().mapToLong(n -> Long.parseLong(n.getAmount())).sum();
         Long dailyAmount = dailyTransactions.stream().mapToLong(n -> Long.parseLong(n.getAmount())).sum();
 
-        CountryRiskConfig merchantCountryScore = countryRiskConfigRepository.findByCountry(req.getMerchantLocation());
+        CountryRiskConfig merchantCountryScore = countryRiskConfigRepository.findByCountryIgnoreCase(req.getMerchantLocation());
         Long riskScore = 0l;
         if(merchantCountryScore != null)
             riskScore = Long.valueOf(merchantCountryScore.getRiskScoreGeography());

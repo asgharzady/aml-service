@@ -2,6 +2,7 @@ package com.appopay.aml.service;
 
 import com.appopay.aml.Exception.CustomException;
 import com.appopay.aml.entity.Partner;
+import com.appopay.aml.entity.Partner;
 import com.appopay.aml.entity.CountryRiskConfig;
 import com.appopay.aml.entity.Partner;
 import com.appopay.aml.model.*;
@@ -32,7 +33,7 @@ public class PartnerService {
         if (partnerDTO.getId() != null) {
             throw new CustomException("new partner can not have ID");
         } else {
-            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountry(partnerDTO.getCountryOfOrigin());
+            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountryIgnoreCase(partnerDTO.getCountryOfOrigin());
             Long countryRisk = 0L;
             boolean isBlocked = false;
             if (countryRiskConfig != null)
@@ -65,6 +66,8 @@ public class PartnerService {
             partner.setName(partnerDTO.getName());
         if (partnerDTO.getCountryOfOrigin() != null)
             partner.setCountryOfOrigin(partner.getCountryOfOrigin());
+        if (partnerDTO.getRiskStatus() != null)
+            partner.setRiskStatus(partnerDTO.getRiskStatus());
         if (partnerDTO.getRiskScore() != null)
             partner.setRiskScore(partner.getRiskScore());
         if (partnerDTO.getPoliticallyExposedPerson() != null)
@@ -76,6 +79,21 @@ public class PartnerService {
         if (partnerDTO.getIdentityNumber() != null)
             partner.setIdentityNumber(partnerDTO.getIdentityNumber());
         return partnerRepository.save(partner).toDTO();
+    }
+
+    public String blockbyId(Long partnerId, boolean block) {
+        log.info("blocking partner with partner id " + partnerId);
+        Optional<Partner> optionalPartner = partnerRepository.findById(partnerId);
+        Partner partner = null;
+        if (optionalPartner.isEmpty()) {
+            log.info("partner not present with partner id " + partnerId);
+            throw new CustomException("partner not present");
+        } else {
+            partner = optionalPartner.get();
+            partner.setBlocked(block);
+            partnerRepository.save(partner);
+            return "block: " + block;
+        }
     }
 
     public PartnerDTO getById(Long id){

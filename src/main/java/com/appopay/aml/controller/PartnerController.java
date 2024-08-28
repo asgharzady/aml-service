@@ -25,6 +25,10 @@ public class PartnerController {
         return ResponseEntity.ok().body(partnerService.updateOne(request));
     }
 
+    @PutMapping(value = "/block/{partnerId}/{block}")
+    public ResponseEntity<String> BlockMerchant(@PathVariable Long partnerId, @PathVariable boolean block) {
+        return ResponseEntity.ok().body(partnerService.blockbyId(partnerId, block));
+    }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<PartnerDTO> updateOne(@PathVariable("id") Long id) {

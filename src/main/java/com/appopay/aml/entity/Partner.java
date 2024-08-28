@@ -19,6 +19,7 @@ public class Partner {
     private Long id;
     private String name;
     private String countryOfOrigin;
+    private String riskStatus;
     private String riskScore;
     private boolean politicallyExposedPerson;
     private boolean isBlocked;
@@ -48,6 +49,7 @@ public class Partner {
         response.setId(this.id);
         response.setName(this.name);
         response.setCountryOfOrigin(this.countryOfOrigin);
+        response.setRiskStatus(this.riskStatus);
         response.setRiskScore(this.riskScore);
         response.setPoliticallyExposedPerson(this.politicallyExposedPerson);
         response.setIsBlocked(this.isBlocked);

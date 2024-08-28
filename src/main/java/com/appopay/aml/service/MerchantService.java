@@ -1,6 +1,7 @@
 package com.appopay.aml.service;
 
 import com.appopay.aml.Exception.CustomException;
+import com.appopay.aml.entity.Merchant;
 import com.appopay.aml.entity.CountryRiskConfig;
 import com.appopay.aml.entity.Merchant;
 import com.appopay.aml.entity.Merchant;
@@ -32,7 +33,7 @@ public class MerchantService {
         if (merchantDTO.getId() != null) {
             throw new CustomException("new merchant can not have ID");
         } else {
-            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountry(merchantDTO.getCountryOfOrigin());
+            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountryIgnoreCase(merchantDTO.getCountryOfOrigin());
             Long countryRisk = 0L;
             boolean isBlocked = false;
             if (countryRiskConfig != null)
@@ -65,6 +66,8 @@ public class MerchantService {
             merchant.setName(merchantDTO.getName());
         if (merchantDTO.getCountryOfOrigin() != null)
             merchant.setCountryOfOrigin(merchant.getCountryOfOrigin());
+        if (merchantDTO.getRiskStatus() != null)
+            merchant.setRiskStatus(merchantDTO.getRiskStatus());
         if (merchantDTO.getRiskScore() != null)
             merchant.setRiskScore(merchant.getRiskScore());
         if (merchantDTO.getPoliticallyExposedPerson() != null)
@@ -76,6 +79,21 @@ public class MerchantService {
         if (merchantDTO.getIdentityNumber() != null)
             merchant.setIdentityNumber(merchantDTO.getIdentityNumber());
         return merchantRepository.save(merchant).toDTO();
+    }
+
+    public String blockbyId(Long merchantId, boolean block) {
+        log.info("blocking agent with agent id " + merchantId);
+        Optional<Merchant> optionalMerchant = merchantRepository.findById(merchantId);
+        Merchant merchant = null;
+        if (optionalMerchant.isEmpty()) {
+            log.info("merchant not present with merchant id " + merchantId);
+            throw new CustomException("merchant not present");
+        } else {
+            merchant = optionalMerchant.get();
+            merchant.setBlocked(block);
+            merchantRepository.save(merchant);
+            return "block: " + block;
+        }
     }
 
     public MerchantDTO getById(Long id) {

@@ -10,6 +10,7 @@ public class MerchantDTO {
     Long id;
     String name;
     String countryOfOrigin;
+    String riskStatus;
     String riskScore;
     Boolean politicallyExposedPerson;
     Boolean isBlocked;

@@ -28,6 +28,11 @@ public class MerchantController {
         return ResponseEntity.ok().body(merchantService.updateOne(request));
     }
 
+    @PutMapping(value = "/block/{mercahntId}/{block}")
+    public ResponseEntity<String> BlockMerchant(@PathVariable Long merchantId, @PathVariable boolean block) {
+        return ResponseEntity.ok().body(merchantService.blockbyId(merchantId, block));
+    }
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<MerchantDTO> updateOne(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(merchantService.getById(id));

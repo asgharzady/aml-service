@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CountryRiskConfigRepository extends JpaRepository<CountryRiskConfig, Long> {
 
-    CountryRiskConfig findByCountry(String country);
+    CountryRiskConfig findByCountryIgnoreCase(String country);
 
 }
