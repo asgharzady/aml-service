@@ -194,7 +194,10 @@ public class CustomerService {
         else {
             Customers customer = optionalCustomers.get();
             List<String> response = new ArrayList<>();
-            IdCard idCard = new IdCard();
+            IdCard idCard = customer.getIdCard();
+            if (idCard == null) {
+                idCard = new IdCard(); // Create a new IdCard if it doesn't exist
+            }
 
             String keyName = getFileHashName(front);
             s3Service.uploadFile(front, keyName);
@@ -211,7 +214,7 @@ public class CustomerService {
             idCard.setFirstName(request.getFirstName());
             idCard.setLastName(request.getLastName());
             idCard.setExpiryDate(request.getExpiryDate());
-            customer.setIdCards(new ArrayList<>(List.of(idCard)));
+            customer.setIdCard(idCard);
             customerRepository.save(customer);
 
             return response;
@@ -235,10 +238,10 @@ public class CustomerService {
     public IdCard getIdCard(String customerId) {
         Optional<Customers> optionalCustomers = customerRepository.findById(customerId);
         if (optionalCustomers.isPresent()) {
-            List<IdCard> idCardList = optionalCustomers.get().getIdCards();
-            if (idCardList.size() == 0)
+            IdCard idCard = optionalCustomers.get().getIdCard();
+            if (idCard == null)
                 throw new CustomException("id card not found");
-            return idCardList.get(0);
+            return idCard;
 
         } else {
             throw new CustomException("customer not found");

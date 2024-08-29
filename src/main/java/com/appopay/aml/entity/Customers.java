@@ -26,9 +26,9 @@ public class Customers {
     private String identityType;
     private String identityNumber;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "customerId")
-    private List<IdCard> idCards;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_card")
+    private IdCard idCard;
     @CreationTimestamp
     private Instant createdAt;
     @UpdateTimestamp
