@@ -8,7 +8,7 @@ public class RecordCustomerTrxReqDTO {
     private String transactionAmount;
     private String transactionType;
     private String transactionDescription;
-    private Long customerId;
+    private String customerId;
     private String merchantLocation;
 
 }
