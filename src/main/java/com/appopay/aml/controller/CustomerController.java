@@ -56,12 +56,12 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<CustomersDTO> getCustomerByID(@PathVariable Long id) {
+    public ResponseEntity<CustomersDTO> getCustomerByID(@PathVariable String id) {
         return ResponseEntity.ok().body(customerService.findById(id));
     }
 
     @PutMapping(value = "/block/{customerId}/{block}")
-    public ResponseEntity<String> BlockCustomer(@PathVariable Long customerId, @PathVariable boolean block) {
+    public ResponseEntity<String> BlockCustomer(@PathVariable String customerId, @PathVariable boolean block) {
         return ResponseEntity.ok().body(customerService.blockbyCustomerId(customerId, block));
     }
 
@@ -71,7 +71,7 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/transactions/{id}")
-    public ResponseEntity<List<CustomerTrxResDTO>> getTransactions(@PathVariable Long id) {
+    public ResponseEntity<List<CustomerTrxResDTO>> getTransactions(@PathVariable String id) {
         return ResponseEntity.ok().body(customerService.getTransactions(id));
     }
 
@@ -83,7 +83,7 @@ public class CustomerController {
     }
 
     @GetMapping(value = "idCard/{customerId}")
-    public ResponseEntity<IdCard> getIdCard(@PathVariable Long customerId){
+    public ResponseEntity<IdCard> getIdCard(@PathVariable String customerId){
         return ResponseEntity.ok(customerService.getIdCard(customerId));
     }
 }

@@ -16,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.client.HttpServerErrorException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +56,7 @@ public class CustomerService {
         return response;
     }
 
-    public CustomersDTO findById(Long id) {
+    public CustomersDTO findById(String id) {
         Optional<Customers> optionalCustomers = customerRepository.findById(id);
         if (optionalCustomers.isPresent())
             return optionalCustomers.get().toDTO();
@@ -113,7 +115,7 @@ public class CustomerService {
         }
     }
 
-    public String blockbyCustomerId(Long customerId, boolean block) {
+    public String blockbyCustomerId(String customerId, boolean block) {
         log.info("blocking customer with customer id " + customerId);
         Optional<Customers> optionalCustomers = customerRepository.findById(customerId);
         Customers customer = null;
@@ -128,7 +130,7 @@ public class CustomerService {
         }
     }
 
-    public List<CustomerTrxResDTO> getTransactions(Long id) {
+    public List<CustomerTrxResDTO> getTransactions(String id) {
         Optional<Customers> optionalCustomers = customerRepository.findById(id);
         Customers customer = null;
         if (optionalCustomers.isEmpty()) {
@@ -194,13 +196,13 @@ public class CustomerService {
             List<String> response = new ArrayList<>();
             IdCard idCard = new IdCard();
 
-            String keyName = front.getOriginalFilename();
+            String keyName = getFileHashName(front);
             s3Service.uploadFile(front, keyName);
             String url = baseUrl + keyName;
             idCard.setFrontIdUrl(url);
             response.add("frontUrl: " + url);
 
-            keyName = back.getOriginalFilename();
+            keyName = getFileHashName(back);
             s3Service.uploadFile(back, keyName);
             url = baseUrl + keyName;
             idCard.setBackIdUrl(url);
@@ -216,15 +218,29 @@ public class CustomerService {
         }
     }
 
-    public IdCard getIdCard(Long customerId){
-        Optional<Customers> optionalCustomers = customerRepository.findById(customerId);
-        if (optionalCustomers.isPresent()){
-            IdCard idCard = optionalCustomers.get().getIdCards().get(0);
-            if(idCard == null)
-                throw new CustomException("id not found");
-            return idCard;
+    public String getFileHashName(MultipartFile file) {
+        try {
+
+            String hash = DigestUtils.md5DigestAsHex(file.getBytes());
+            String originalFileName = file.getOriginalFilename();
+            String extention = originalFileName.substring(originalFileName.lastIndexOf('.'));
+
+            return hash + extention;
+        } catch (IOException e) {
+            throw new CustomException("not able to process file");
         }
-        else {
+    }
+
+
+    public IdCard getIdCard(String customerId) {
+        Optional<Customers> optionalCustomers = customerRepository.findById(customerId);
+        if (optionalCustomers.isPresent()) {
+            List<IdCard> idCardList = optionalCustomers.get().getIdCards();
+            if (idCardList.size() == 0)
+                throw new CustomException("id card not found");
+            return idCardList.get(0);
+
+        } else {
             throw new CustomException("customer not found");
         }
     }
