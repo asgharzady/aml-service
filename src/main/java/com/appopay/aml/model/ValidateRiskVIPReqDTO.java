@@ -9,6 +9,6 @@ public class ValidateRiskVIPReqDTO {
     private String countryOfOrigin;
     private boolean politicallyExposedPerson;
     private String sourceOfIncome;
-    private Long customerId;
+    private String customerId;
 
 }
