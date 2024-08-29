@@ -26,29 +26,16 @@ public class AgentService {
     @Autowired
     private CountryRiskConfigRepository countryRiskConfigRepository;
     private static final Logger log = LoggerFactory.getLogger(AgentService.class);
-    public AgentDTO createAgent(AgentDTO agentDTO) {
-        Agent agent = null;
+
+    public Agent createAgent(AgentDTO agentDTO) {
         if (agentDTO.getId() != null) {
             throw new CustomException("new agent can not have ID");
         } else {
-            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountryIgnoreCase(agentDTO.getCountryOfOrigin());
-            Long countryRisk = 0L;
-            boolean isBlocked = false;
-            if (countryRiskConfig != null)
-                countryRisk = Long.valueOf(countryRiskConfig.getRiskScoreNationality());
-            if (agentDTO.getPoliticallyExposedPerson())
-                agentDTO.setRiskScore(String.valueOf(countryRisk + Constants.POLITICALLY_EXPOSED));
-            else {
-                agentDTO.setRiskScore(String.valueOf(countryRisk));
-            }
-            if (Long.parseLong(agentDTO.getRiskScore()) > Constants.ALLOWED_RISK)
-                isBlocked = true;
-            agent = new Agent(agentDTO, isBlocked);
-            return agentRepository.save(agent).toDTO();
+            return agentRepository.save(agentDTO.toEntity());
         }
     }
 
-    public AgentDTO updateOne(AgentDTO agentDTO) {
+    public Agent updateOne(AgentDTO agentDTO) {
         if (agentDTO.getId() == null) {
             throw new CustomException("please enter an agent Id");
         }
@@ -60,51 +47,106 @@ public class AgentService {
 
         Agent agent = optionalAgent.get();
 
-        if (agentDTO.getName() != null)
-            agent.setName(agentDTO.getName());
-        if (agentDTO.getCountryOfOrigin() != null)
-            agent.setCountryOfOrigin(agent.getCountryOfOrigin());
-        if (agentDTO.getRiskStatus() != null)
-            agent.setRiskStatus(agentDTO.getRiskStatus());
-        if (agentDTO.getRiskScore() != null)
-            agent.setRiskScore(agent.getRiskScore());
-        if (agentDTO.getPoliticallyExposedPerson() != null)
-            agent.setPoliticallyExposedPerson(agentDTO.getPoliticallyExposedPerson());
-        if (agentDTO.getIsBlocked() != null)
-            agent.setBlocked(agentDTO.getIsBlocked());
-        if (agentDTO.getIdentityType() != null)
-            agent.setIdentityType(agentDTO.getIdentityType());
-        if (agentDTO.getIdentityNumber() != null)
-            agent.setIdentityNumber(agentDTO.getIdentityNumber());
-        return agentRepository.save(agent).toDTO();
+        if (agentDTO.getCompRegName() != null)
+            agent.setCompRegName(agentDTO.getCompRegName());
+        if (agentDTO.getCompTradeName() != null)
+            agent.setCompTradeName(agentDTO.getCompTradeName());
+        if (agentDTO.getCompTaxNumber() != null)
+            agent.setCompTaxNumber(agentDTO.getCompTaxNumber());
+        if (agentDTO.getCompanyRegNumber() != null)
+            agent.setCompanyRegNumber(agentDTO.getCompanyRegNumber());
+        if (agentDTO.getCompRegCountry() != null)
+            agent.setCompRegCountry(agentDTO.getCompRegCountry());
+        if (agentDTO.getCompRegDate() != null)
+            agent.setCompRegDate(agentDTO.getCompRegDate());
+        if (agentDTO.getCompRegProvince() != null)
+            agent.setCompRegProvince(agentDTO.getCompRegProvince());
+        if (agentDTO.getCurrAddress() != null)
+            agent.setCurrAddress(agentDTO.toEntity().getCurrAddress());
+        if (agentDTO.getPhyAddress() != null)
+            agent.setPhyAddress(agentDTO.toEntity().getPhyAddress());
+        if (agentDTO.getPostAddress() != null)
+            agent.setPostAddress(agentDTO.toEntity().getPostAddress());
+        if (agentDTO.getMainPhoneNo() != null)
+            agent.setMainPhoneNo(agentDTO.getMainPhoneNo());
+        if (agentDTO.getSecPhoneNumber() != null)
+            agent.setSecPhoneNumber(agentDTO.getSecPhoneNumber());
+        if (agentDTO.getCompWebsite() != null)
+            agent.setCompWebsite(agentDTO.getCompWebsite());
+        if (agentDTO.getTradeNameWebsite() != null)
+            agent.setTradeNameWebsite(agentDTO.getTradeNameWebsite());
+        if (agentDTO.getIsListedOnSE() != null)
+            agent.setIsListedOnSE(agentDTO.getIsListedOnSE());
+        if (agentDTO.getExchangeName() != null)
+            agent.setExchangeName(agentDTO.getExchangeName());
+        if (agentDTO.getSymbolListed() != null)
+            agent.setSymbolListed(agentDTO.getSymbolListed());
+        if (agentDTO.getIsRegByFinEntity() != null)
+            agent.setIsRegByFinEntity(agentDTO.getIsRegByFinEntity());
+        if (agentDTO.getIsRegByFinSerRegulator() != null)
+            agent.setIsRegByFinSerRegulator(agentDTO.getIsRegByFinSerRegulator());
+        if (agentDTO.getFinEntity() != null)
+            agent.setFinEntity(agentDTO.getFinEntity());
+        if (agentDTO.getFinSerRegulatorName() != null)
+            agent.setFinSerRegulatorName(agentDTO.getFinSerRegulatorName());
+        if (agentDTO.getPrimPerContactName() != null)
+            agent.setPrimPerContactName(agentDTO.getPrimPerContactName());
+        if (agentDTO.getPrimPerEmail() != null)
+            agent.setPrimPerEmail(agentDTO.getPrimPerEmail());
+        if (agentDTO.getPrimPerPhoneNo() != null)
+            agent.setPrimPerPhoneNo(agentDTO.getPrimPerPhoneNo());
+        if (agentDTO.getPrimPerPosition() != null)
+            agent.setPrimPerPosition(agentDTO.getPrimPerPosition());
+        if (agentDTO.getPrimPerExtension() != null)
+            agent.setPrimPerExtension(agentDTO.getPrimPerExtension());
+        if (agentDTO.getAuthsignName() != null)
+            agent.setAuthsignName(agentDTO.getAuthsignName());
+        if (agentDTO.getAuthsignPosition() != null)
+            agent.setAuthsignPosition(agentDTO.getAuthsignPosition());
+        if (agentDTO.getFinancingBankName() != null)
+            agent.setFinancingBankName(agentDTO.getFinancingBankName());
+        if (agentDTO.getFinancingBankSwiftCode() != null)
+            agent.setFinancingBankSwiftCode(agentDTO.getFinancingBankSwiftCode());
+        if (agentDTO.getFundingAccountName() != null)
+            agent.setFundingAccountName(agentDTO.getFundingAccountName());
+        if (agentDTO.getFundingAccHolderRelation() != null)
+            agent.setFundingAccHolderRelation(agentDTO.getFundingAccHolderRelation());
+        if (agentDTO.getCurrencies() != null)
+            agent.setCurrencies(agentDTO.getCurrencies());
+        if(agentDTO.getBeneficialOweners() != null)
+            agent.setBeneficialOweners(agentDTO.toEntity().getBeneficialOweners());
+        if(agentDTO.getControlOweners() != null)
+            agent.setControlOweners(agentDTO.toEntity().getControlOweners());
+        return agentRepository.save(agent);
     }
+//
+//    public String blockbyId(Long agentId, boolean block) {
+//        log.info("blocking agent with agent id " + agentId);
+//        Optional<Agent> optionalAgent = agentRepository.findById(agentId);
+//        Agent agent = null;
+//        if (optionalAgent.isEmpty()) {
+//            log.info("agent not present with agent id " + agentId);
+//            throw new CustomException("agent not present");
+//        } else {
+//            agent = optionalAgent.get();
+//            agent.setBlocked(block);
+//            agentRepository.save(agent);
+//            return "block: " + block;
+//        }
+//    }
+//
 
-    public String blockbyId(Long agentId, boolean block) {
-        log.info("blocking agent with agent id " + agentId);
-        Optional<Agent> optionalAgent = agentRepository.findById(agentId);
-        Agent agent = null;
-        if (optionalAgent.isEmpty()) {
-            log.info("agent not present with agent id " + agentId);
-            throw new CustomException("agent not present");
-        } else {
-            agent = optionalAgent.get();
-            agent.setBlocked(block);
-            agentRepository.save(agent);
-            return "block: " + block;
-        }
-    }
-
-    public AgentDTO getById(Long id){
+    public Agent getById(Long id){
         Optional<Agent> agent = agentRepository.findById(id);
         if(agent.isPresent()){
-            return agent.get().toDTO();
+            return agent.get();
         }
         throw new CustomException("Agent not found");
     }
 
     public PaginatedAgent findAll(Pageable pageable) {
         PaginatedAgent response = new PaginatedAgent();
-        response.setData(agentRepository.findAll(pageable).stream().map(Agent::toDTO).toList());
+        response.setData(agentRepository.findAll(pageable).stream().toList());
         response.setTotalDocuments(agentRepository.count());
         return response;
     }

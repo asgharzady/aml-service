@@ -1,6 +1,7 @@
 package com.appopay.aml.controller;
 
 
+import com.appopay.aml.entity.Agent;
 import com.appopay.aml.model.*;
 import com.appopay.aml.service.AgentService;
 import com.appopay.aml.service.CustomerService;
@@ -20,22 +21,22 @@ public class AgentController {
     @Autowired
     private AgentService agentService;
     @PostMapping(value = "/")
-    public ResponseEntity<AgentDTO> createAgent(@RequestBody AgentDTO request) {
+    public ResponseEntity<Agent> createAgent(@RequestBody AgentDTO request) {
         return ResponseEntity.ok().body(agentService.createAgent(request));
     }
 
     @PutMapping(value = "/")
-    public ResponseEntity<AgentDTO> updateOne(@RequestBody AgentDTO request) {
+    public ResponseEntity<Agent> updateOne(@RequestBody AgentDTO request) {
         return ResponseEntity.ok().body(agentService.updateOne(request));
     }
-
-    @PutMapping(value = "/block/{agentId}/{block}")
-    public ResponseEntity<String> BlockAgent(@PathVariable Long agentId, @PathVariable boolean block) {
-        return ResponseEntity.ok().body(agentService.blockbyId(agentId, block));
-    }
-
+//
+//    @PutMapping(value = "/block/{agentId}/{block}")
+//    public ResponseEntity<String> BlockAgent(@PathVariable Long agentId, @PathVariable boolean block) {
+//        return ResponseEntity.ok().body(agentService.blockbyId(agentId, block));
+//    }
+//
     @GetMapping(value = "/{id}")
-    public ResponseEntity<AgentDTO> updateOne(@PathVariable("id") Long id) {
+    public ResponseEntity<Agent> getById(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(agentService.getById(id));
     }
 

@@ -1,62 +1,65 @@
 package com.appopay.aml.entity;
-
-import com.appopay.aml.model.CustomersDTO;
-import com.appopay.aml.model.PartnerDTO;
-import com.appopay.aml.model.ValidateRiskRegReqDTO;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
+import java.util.List;
 
 @Table(name = "partner")
 @Data
 @Entity
 public class Partner {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String countryOfOrigin;
-    private String riskStatus;
-    private String riskScore;
-    private boolean politicallyExposedPerson;
-    private boolean isBlocked;
-    private String sourceOfIncome;
-    private String identityType;
-    private String identityNumber;
-    @CreationTimestamp
-    private Instant createdAt;
-    @UpdateTimestamp
-    private Instant updatedAt;
+    private String compRegName;
+    private String compTradeName;
+    private String compTaxNumber;
+    private String companyRegNumber;
+    private String compRegCountry;
+    private String compRegDate;
+    private String compRegProvince;
 
-    public Partner() {}
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "curr_add_id")
+    private Address currAddress;
 
-    public Partner(PartnerDTO req, boolean isBlocked) {
-        this.id = req.getId();
-        this.name = req.getName();
-        this.countryOfOrigin = req.getCountryOfOrigin();
-        this.riskScore = req.getRiskScore();
-        this.politicallyExposedPerson = req.getPoliticallyExposedPerson();
-        this.isBlocked = isBlocked;
-        this.identityType = req.getIdentityType();
-        this.identityNumber = req.getIdentityNumber();
-    }
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "phy_add_id")
+    private Address phyAddress;
 
-    public PartnerDTO toDTO() {
-        PartnerDTO response = new PartnerDTO();
-        response.setId(this.id);
-        response.setName(this.name);
-        response.setCountryOfOrigin(this.countryOfOrigin);
-        response.setRiskStatus(this.riskStatus);
-        response.setRiskScore(this.riskScore);
-        response.setPoliticallyExposedPerson(this.politicallyExposedPerson);
-        response.setIsBlocked(this.isBlocked);
-        response.setIdentityType(this.identityType);
-        response.setIdentityNumber(this.identityNumber);
-        return response;
-    }
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_add_id")
+    private Address postAddress;
+    private String mainPhoneNo ;
+    private String secPhoneNumber;
+    private String compWebsite;
+    private String tradeNameWebsite;
+    private Boolean isListedOnSE;
+    private String exchangeName;
+    private String symbolListed;
+    private Boolean isRegByFinEntity;
+    private Boolean isRegByFinSerRegulator;
+    private String finEntity;
+    private String finSerRegulatorName;
+    private String primPerContactName;
+    private String primPerEmail;
+    private String primPerPhoneNo;
+    private String primPerPosition;
+    private String primPerExtension;
+    private String authsignName;
+    private String authsignPosition;
+    private String financingBankName;
+    private String financingBankSwiftCode;
+    private String fundingAccountName ;
+    private String fundingAccHolderRelation;
+    private String currencies;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "partner_id")
+    private List<Person> beneficialOweners;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "partner_id")
+    private List<Person> controlOweners;
 }
