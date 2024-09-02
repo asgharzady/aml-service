@@ -18,46 +18,40 @@ public class Merchant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String countryOfOrigin;
-
-    private String riskStatus;
-    private String riskScore;
-    private boolean politicallyExposedPerson;
-    private boolean isBlocked;
-    private String identityType;
-    private String identityNumber;
+    private String legalName;
+    private String tradeName;
+    private String typeOfBusiness;
+    private String startDate;
+    private String country;
+    private String telephone;
+    private String email;
+    private String ruc;
+    private String legalRepName;
+    private String license;
+    private String title;
+    private String dob;
+    private String nationality;
+    private String address;
+    private String contactName;
+    private String contactTelephone;
+    private String contactEmail;
+    private String monthlySales;
+    private String transactionTypech;
+    private String averageTicket;
+    private String monthlyTransactions;
+    private String commercialReferences;
+    private String accountName;
+    private String accountType;
+    private String bankName;
+    private String accountNumber;
+    private String pepStatus;
+    private String pepPosition;
+    private String pepStartDate;
+    private String pepEndDate;
+    private String pepFamilyDetails;
     @CreationTimestamp
     private Instant createdAt;
     @UpdateTimestamp
     private Instant updatedAt;
-
-    public Merchant() {
-    }
-
-    public Merchant(MerchantDTO req, boolean isBlocked) {
-        this.id = req.getId();
-        this.name = req.getName();
-        this.countryOfOrigin = req.getCountryOfOrigin();
-        this.riskScore = req.getRiskScore();
-        this.politicallyExposedPerson = req.getPoliticallyExposedPerson();
-        this.isBlocked = isBlocked;
-        this.identityType = req.getIdentityType();
-        this.identityNumber = req.getIdentityNumber();
-    }
-    public MerchantDTO toDTO() {
-        MerchantDTO response = new MerchantDTO();
-        response.setId(this.id);
-        response.setName(this.name);
-        response.setCountryOfOrigin(this.countryOfOrigin);
-        response.setRiskStatus(this.riskStatus);
-        response.setRiskScore(this.riskScore);
-        response.setPoliticallyExposedPerson(this.politicallyExposedPerson);
-        response.setIsBlocked(this.isBlocked);
-        response.setIdentityType(this.identityType);
-        response.setIdentityNumber(this.identityNumber);
-        return response;
-    }
-
 
 }

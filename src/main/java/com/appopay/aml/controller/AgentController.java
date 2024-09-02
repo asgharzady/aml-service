@@ -29,12 +29,7 @@ public class AgentController {
     public ResponseEntity<Agent> updateOne(@RequestBody AgentDTO request) {
         return ResponseEntity.ok().body(agentService.updateOne(request));
     }
-//
-//    @PutMapping(value = "/block/{agentId}/{block}")
-//    public ResponseEntity<String> BlockAgent(@PathVariable Long agentId, @PathVariable boolean block) {
-//        return ResponseEntity.ok().body(agentService.blockbyId(agentId, block));
-//    }
-//
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<Agent> getById(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(agentService.getById(id));

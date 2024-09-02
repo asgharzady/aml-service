@@ -37,7 +37,7 @@ public class PartnerService {
 
     public Partner updateOne(PartnerDTO partnerDTO) {
         if (partnerDTO.getId() == null) {
-            throw new CustomException("please enter an partner Id");
+            throw new CustomException("please enter a partner Id");
         }
         Optional<Partner> optionalPartner = partnerRepository.findById(partnerDTO.getId());
 
@@ -113,6 +113,8 @@ public class PartnerService {
             partner.setFundingAccHolderRelation(partnerDTO.getFundingAccHolderRelation());
         if (partnerDTO.getCurrencies() != null)
             partner.setCurrencies(partnerDTO.getCurrencies());
+        System.out.println("here");
+        System.out.println(partnerDTO.toEntity().getBeneficialOweners());
         if(partnerDTO.getBeneficialOweners() != null)
             partner.setBeneficialOweners(partnerDTO.toEntity().getBeneficialOweners());
         if(partnerDTO.getControlOweners() != null)

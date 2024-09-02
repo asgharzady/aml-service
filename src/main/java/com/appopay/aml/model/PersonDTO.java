@@ -21,18 +21,18 @@ public class PersonDTO {
     String countryOfResidence;
     String cityOfResidence;
 
-    public Person toEntity() {
+    public static Person toEntity(PersonDTO personDTO) {
         Person person = new Person();
-        person.setId(this.id);
-        person.setFullName(this.fullName);
-        person.setDOB(this.DOB);
-        person.setNationality(this.nationality);
-        person.setFullResAddress(this.fullResAddress);
-        person.setPercentageOfOwnership(this.PercentageOfOwnership);
-        person.setPEP(this.PEP);
-        person.setIslinkedToPEPpPosition(this.islinkedToPEPpPosition);
-        person.setCountryOfResidence(this.countryOfResidence);
-        person.setCityOfResidence(this.cityOfResidence);
+        person.setId(personDTO.getId());
+        person.setFullName(personDTO.getFullName());
+        person.setDOB(personDTO.getDOB());
+        person.setNationality(personDTO.getNationality());
+        person.setFullResAddress(personDTO.getFullResAddress());
+        person.setPercentageOfOwnership(personDTO.getPercentageOfOwnership());
+        person.setPEP(personDTO.getPEP());
+        person.setIslinkedToPEPpPosition(personDTO.getIslinkedToPEPpPosition());
+        person.setCountryOfResidence(personDTO.getCountryOfResidence());
+        person.setCityOfResidence(personDTO.getCityOfResidence());
         return person;
     }
 }

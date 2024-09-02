@@ -92,14 +92,14 @@ public class AgentDTO {
         List<Person> beneficialOweners = new ArrayList<>();
         if(this.getBeneficialOweners() != null){
             for(PersonDTO personDTO: this.getBeneficialOweners()){
-                beneficialOweners.add(personDTO.toEntity());
+                beneficialOweners.add(PersonDTO.toEntity(personDTO));
             }
         }
         agent.setBeneficialOweners(beneficialOweners);
         List<Person> controlOweners = new ArrayList<>();
         if(this.getControlOweners() != null){
             for(PersonDTO personDTO: this.getControlOweners()){
-                controlOweners.add(personDTO.toEntity());
+                controlOweners.add(PersonDTO.toEntity(personDTO));
             }
         }
         agent.setControlOweners(controlOweners);

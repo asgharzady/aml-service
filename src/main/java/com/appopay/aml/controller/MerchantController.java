@@ -1,6 +1,7 @@
 package com.appopay.aml.controller;
 
 
+import com.appopay.aml.entity.Merchant;
 import com.appopay.aml.model.MerchantDTO;
 import com.appopay.aml.model.PaginatedMerchant;
 import com.appopay.aml.model.ValidateRiskRegReqDTO;
@@ -19,22 +20,22 @@ public class MerchantController {
     @Autowired
     private MerchantService merchantService;
     @PostMapping(value = "/")
-    public ResponseEntity<MerchantDTO> createMerchant(@RequestBody MerchantDTO request) {
+    public ResponseEntity<Merchant> createMerchant(@RequestBody MerchantDTO request) {
         return ResponseEntity.ok().body(merchantService.createMerchant(request));
     }
 
     @PutMapping(value = "/")
-    public ResponseEntity<MerchantDTO> updateOne(@RequestBody MerchantDTO request) {
+    public ResponseEntity<Merchant> updateOne(@RequestBody MerchantDTO request) {
         return ResponseEntity.ok().body(merchantService.updateOne(request));
     }
 
-    @PutMapping(value = "/block/{merchantId}/{block}")
-    public ResponseEntity<String> BlockMerchant(@PathVariable Long merchantId, @PathVariable boolean block) {
-        return ResponseEntity.ok().body(merchantService.blockbyId(merchantId, block));
-    }
+//    @PutMapping(value = "/block/{merchantId}/{block}")
+//    public ResponseEntity<String> BlockMerchant(@PathVariable Long merchantId, @PathVariable boolean block) {
+//        return ResponseEntity.ok().body(merchantService.blockbyId(merchantId, block));
+//    }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<MerchantDTO> updateOne(@PathVariable("id") Long id) {
+    public ResponseEntity<Merchant> updateOne(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(merchantService.getById(id));
     }
 
