@@ -20,19 +20,18 @@ public class PersonDTO {
     Boolean islinkedToPEPpPosition;
     String countryOfResidence;
     String cityOfResidence;
-
-    public static Person toEntity(PersonDTO personDTO) {
+    public Person toEntity() {
         Person person = new Person();
-        person.setId(personDTO.getId());
-        person.setFullName(personDTO.getFullName());
-        person.setDOB(personDTO.getDOB());
-        person.setNationality(personDTO.getNationality());
-        person.setFullResAddress(personDTO.getFullResAddress());
-        person.setPercentageOfOwnership(personDTO.getPercentageOfOwnership());
-        person.setPEP(personDTO.getPEP());
-        person.setIslinkedToPEPpPosition(personDTO.getIslinkedToPEPpPosition());
-        person.setCountryOfResidence(personDTO.getCountryOfResidence());
-        person.setCityOfResidence(personDTO.getCityOfResidence());
+        person.setId(this.getId());
+        person.setFullName(this.getFullName());
+        person.setDOB(this.getDOB());
+        person.setNationality(this.getNationality());
+        person.setFullResAddress(this.getFullResAddress());
+        person.setPercentageOfOwnership(this.getPercentageOfOwnership());
+        person.setPEP(this.getPEP());
+        person.setIslinkedToPEPpPosition(this.getIslinkedToPEPpPosition());
+        person.setCountryOfResidence(this.getCountryOfResidence());
+        person.setCityOfResidence(this.getCityOfResidence());
         return person;
     }
 }

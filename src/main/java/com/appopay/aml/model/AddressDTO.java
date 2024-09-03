@@ -15,6 +15,7 @@ public class AddressDTO {
 
     public Address toEntity() {
         Address address = new Address();
+        address.setId(this.getId());
         address.setZipCode(this.zipCode);
         address.setState(this.state);
         address.setProvince(this.Province);

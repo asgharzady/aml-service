@@ -89,15 +89,16 @@ public class PartnerDTO {
         List<Person> beneficialOweners = new ArrayList<>();
         if(this.getBeneficialOweners() != null){
             for(PersonDTO personDTO: this.getBeneficialOweners()){
-                beneficialOweners.add(PersonDTO.toEntity(personDTO));
+                beneficialOweners.add(personDTO.toEntity());
             }
         }
+
         partner.setBeneficialOweners(beneficialOweners);
 
         List<Person> controlOweners = new ArrayList<>();
         if(this.getControlOweners() != null){
             for(PersonDTO personDTO: this.getControlOweners()){
-                controlOweners.add(PersonDTO.toEntity(personDTO));
+                controlOweners.add(personDTO.toEntity());
             }
         }
         partner.setControlOweners(controlOweners);
