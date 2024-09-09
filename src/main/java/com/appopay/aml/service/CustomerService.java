@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -246,5 +247,14 @@ public class CustomerService {
         } else {
             throw new CustomException("customer not found");
         }
+    }
+
+    @Transactional
+    public Boolean deleteCustomer(String id){
+        if(customerRepository.existsById(id)){
+            customerRepository.deleteById(id);
+            return true;
+        }
+        throw new CustomException("ID not found");
     }
 }

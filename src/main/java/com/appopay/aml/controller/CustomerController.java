@@ -77,13 +77,19 @@ public class CustomerController {
 
 
     @PostMapping(value = "/upload/{customerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<List<String>> uploadFile(@ModelAttribute()  UploadIdDTO uploadIdDTO) {
+    public ResponseEntity<List<String>> uploadFile(@ModelAttribute() UploadIdDTO uploadIdDTO) {
 
         return ResponseEntity.ok(customerService.uploadId(uploadIdDTO.getFront(), uploadIdDTO.getBack(), uploadIdDTO));
     }
 
     @GetMapping(value = "idCard/{customerId}")
-    public ResponseEntity<IdCard> getIdCard(@PathVariable String customerId){
+    public ResponseEntity<IdCard> getIdCard(@PathVariable String customerId) {
         return ResponseEntity.ok(customerService.getIdCard(customerId));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable("id") String id) {
+        customerService.deleteCustomer(id);
+        return ResponseEntity.ok().build();
     }
 }
