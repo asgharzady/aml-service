@@ -10,6 +10,7 @@ public class MerchantDTO {
     Long id;
     String legalName;
     String tradeName;
+    String risk;
     String typeOfBusiness;
     String startDate;
     String country;
@@ -43,6 +44,7 @@ public class MerchantDTO {
     public Merchant toEntity() {
         Merchant merchant = new Merchant();
         merchant.setLegalName(this.getLegalName());
+        merchant.setRisk(this.getRisk());
         merchant.setTradeName(this.getTradeName());
         merchant.setTypeOfBusiness(this.getTypeOfBusiness());
         merchant.setStartDate(this.getStartDate());

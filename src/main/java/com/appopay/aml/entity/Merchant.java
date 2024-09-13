@@ -19,6 +19,7 @@ public class Merchant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String legalName;
+    private String risk;
     private String tradeName;
     private String typeOfBusiness;
     private String startDate;

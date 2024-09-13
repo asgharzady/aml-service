@@ -32,7 +32,9 @@ public class MerchantService {
         if (merchantDTO.getId() != null) {
             throw new CustomException("new agent can not have ID");
         } else {
-            return merchantRepository.save(merchantDTO.toEntity());
+            Merchant merchant = merchantDTO.toEntity();
+            merchant.setRisk(getRisk(merchantDTO.getCountry()));
+            return merchantRepository.save(merchant);
         }
     }
 
@@ -113,20 +115,6 @@ public class MerchantService {
         return merchantRepository.save(merchant);
     }
 
-//    public String blockbyId(Long merchantId, boolean block) {
-//        log.info("blocking agent with agent id " + merchantId);
-//        Optional<Merchant> optionalMerchant = merchantRepository.findById(merchantId);
-//        Merchant merchant = null;
-//        if (optionalMerchant.isEmpty()) {
-//            log.info("merchant not present with merchant id " + merchantId);
-//            throw new CustomException("merchant not present");
-//        } else {
-//            merchant = optionalMerchant.get();
-//            merchant.setBlocked(block);
-//            merchantRepository.save(merchant);
-//            return "block: " + block;
-//        }
-//    }
 
     public Merchant getById(Long id) {
         Optional<Merchant> merchant = merchantRepository.findById(id);
@@ -141,6 +129,18 @@ public class MerchantService {
         response.setData(merchantRepository.findAll(pageable).stream().toList());
         response.setTotalDocuments(merchantRepository.count());
         return response;
+    }
+
+    public String getRisk(String country){
+        CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountryIgnoreCase(country);
+        Long risk = null;
+        if (countryRiskConfig != null)
+            risk = Long.valueOf(countryRiskConfig.getRiskScoreNationality());
+        if(risk == null)
+            return "null";
+         else{
+             return risk.toString();
+        }
     }
 
 }
