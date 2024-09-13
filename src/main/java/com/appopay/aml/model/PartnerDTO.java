@@ -16,6 +16,7 @@ public class PartnerDTO {
 
     Long id;
     String compRegName;
+    String risk;
     String compTradeName;
     String compTaxNumber;
     String companyRegNumber;
@@ -54,6 +55,7 @@ public class PartnerDTO {
         Partner partner = new Partner();
         partner.setId(this.id);
         partner.setCompRegName(this.compRegName);
+        partner.setRisk(this.risk);
         partner.setCompTradeName(this.compTradeName);
         partner.setCompTaxNumber(this.compTaxNumber);
         partner.setCompanyRegNumber(this.companyRegNumber);

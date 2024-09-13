@@ -24,14 +24,16 @@ public class AgentService {
     private AgentRepository agentRepository;
 
     @Autowired
-    private CountryRiskConfigRepository countryRiskConfigRepository;
+    private MerchantService merchantService;
     private static final Logger log = LoggerFactory.getLogger(AgentService.class);
 
     public Agent createAgent(AgentDTO agentDTO) {
         if (agentDTO.getId() != null) {
             throw new CustomException("new agent can not have ID");
         } else {
-            return agentRepository.save(agentDTO.toEntity());
+            Agent agent = agentDTO.toEntity();
+            agent.setRisk(merchantService.getRisk(agentDTO.getCompRegCountry()));
+            return agentRepository.save(agent);
         }
     }
 

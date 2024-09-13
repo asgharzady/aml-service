@@ -16,6 +16,7 @@ public class AgentDTO {
 
     Long id;
     String compRegName;
+    String risk;
     String compTradeName;
     String compTaxNumber;
     String companyRegNumber;
@@ -54,6 +55,7 @@ public class AgentDTO {
         Agent agent = new Agent();
         agent.setId(this.id);
         agent.setCompRegName(this.compRegName);
+        agent.setRisk(this.risk);
         agent.setCompTradeName(this.compTradeName);
         agent.setCompTaxNumber(this.compTaxNumber);
         agent.setCompanyRegNumber(this.companyRegNumber);

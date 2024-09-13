@@ -13,6 +13,7 @@ public class Partner {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String compRegName;
+    private String risk;
     private String compTradeName;
     private String compTaxNumber;
     private String companyRegNumber;

@@ -1,9 +1,8 @@
 package com.appopay.aml.service;
 
 import com.appopay.aml.Exception.CustomException;
+import com.appopay.aml.entity.*;
 import com.appopay.aml.entity.Partner;
-import com.appopay.aml.entity.Partner;
-import com.appopay.aml.entity.CountryRiskConfig;
 import com.appopay.aml.entity.Partner;
 import com.appopay.aml.model.*;
 import com.appopay.aml.repository.CountryRiskConfigRepository;
@@ -24,14 +23,16 @@ public class PartnerService {
     private PartnerRepository partnerRepository;
 
     @Autowired
-    private CountryRiskConfigRepository countryRiskConfigRepository;
+    private MerchantService merchantService;
     private static final Logger log = LoggerFactory.getLogger(PartnerService.class);
 
     public Partner createPartner(PartnerDTO partnerDTO) {
         if (partnerDTO.getId() != null) {
             throw new CustomException("new partner can not have ID");
         } else {
-            return partnerRepository.save(partnerDTO.toEntity());
+            Partner partner = partnerDTO.toEntity();
+            partner.setRisk(merchantService.getRisk(partnerDTO.getCompRegCountry()));
+            return partnerRepository.save(partner);
         }
     }
 
