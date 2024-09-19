@@ -2,7 +2,11 @@ package com.appopay.aml.model;
 
 import com.appopay.aml.entity.Agent;
 import com.appopay.aml.entity.Merchant;
+import com.appopay.aml.entity.MerchantPEPFamily;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class MerchantDTO {
@@ -39,7 +43,8 @@ public class MerchantDTO {
     String pepPosition;
     String pepStartDate;
     String pepEndDate;
-    String pepFamilyDetails;
+    Boolean linkedToPEP;
+    List<MerchantPEPFamilyDTO> pepFamilyDetails;
 
     public Merchant toEntity() {
         Merchant merchant = new Merchant();
@@ -74,7 +79,14 @@ public class MerchantDTO {
         merchant.setPepPosition(this.getPepPosition());
         merchant.setPepStartDate(this.getPepStartDate());
         merchant.setPepEndDate(this.getPepEndDate());
-        merchant.setPepFamilyDetails(this.getPepFamilyDetails());
+        merchant.setLinkedToPEP(this.linkedToPEP);
+        List<MerchantPEPFamily> list = new ArrayList<>();
+        if(this.pepFamilyDetails != null){
+            for(MerchantPEPFamilyDTO merchantPEPFamilyDTO: this.pepFamilyDetails){
+                list.add(merchantPEPFamilyDTO.toEntity());
+            }
+        }
+        merchant.setPepFamilyDetails(list);
         return merchant;
     }
 }

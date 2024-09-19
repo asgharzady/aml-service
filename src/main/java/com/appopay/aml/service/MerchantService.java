@@ -110,8 +110,11 @@ public class MerchantService {
             merchant.setPepStartDate(merchantDTO.getPepStartDate());
         if(merchantDTO.getPepEndDate() != null)
             merchant.setPepEndDate(merchantDTO.getPepEndDate());
+        if(merchantDTO.getLinkedToPEP()!=null){
+            merchant.setLinkedToPEP(merchantDTO.getLinkedToPEP());
+        }
         if(merchantDTO.getPepFamilyDetails() != null)
-            merchant.setPepFamilyDetails(merchantDTO.getPepFamilyDetails());
+            merchant.setPepFamilyDetails(merchantDTO.toEntity().getPepFamilyDetails());
         return merchantRepository.save(merchant);
     }
 

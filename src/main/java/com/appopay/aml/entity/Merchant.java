@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.List;
 
 @Table(name = "merchant")
 @Data
@@ -49,7 +50,10 @@ public class Merchant {
     private String pepPosition;
     private String pepStartDate;
     private String pepEndDate;
-    private String pepFamilyDetails;
+    private Boolean linkedToPEP;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "merchant_id")
+    private List<MerchantPEPFamily> pepFamilyDetails;
     @CreationTimestamp
     private Instant createdAt;
     @UpdateTimestamp
