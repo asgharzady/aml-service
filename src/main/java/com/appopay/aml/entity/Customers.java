@@ -59,6 +59,7 @@ public class Customers {
         response.setIsBlocked(this.isBlocked);
         response.setIdentityType(this.identityType);
         response.setIdentityNumber(this.identityNumber);
+        response.setSourceOfIncome(this.sourceOfIncome);
         return response;
     }
 

@@ -14,5 +14,6 @@ public class CustomersDTO {
     Boolean isBlocked;
     String identityType;
     String identityNumber;
+    String sourceOfIncome;
 
 }
