@@ -1,9 +1,6 @@
 package com.appopay.aml.entity;
 
-import com.appopay.aml.model.CustomersDTO;
-import com.appopay.aml.model.MerchantDTO;
-import com.appopay.aml.model.MerchantDTO;
-import com.appopay.aml.model.ValidateRiskRegReqDTO;
+import com.appopay.aml.util.RiskStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,6 +18,7 @@ public class Merchant {
     private Long id;
     private String legalName;
     private String risk;
+    private RiskStatus riskStatus;
     private String tradeName;
     private String typeOfBusiness;
     private String startDate;

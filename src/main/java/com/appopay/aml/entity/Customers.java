@@ -8,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.util.List;
 
 @Table(name = "customers")
 @Data
@@ -25,7 +24,7 @@ public class Customers {
     private String sourceOfIncome;
     private String identityType;
     private String identityNumber;
-
+    private String phoneNumber;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_card")
     private IdCard idCard;
@@ -46,6 +45,7 @@ public class Customers {
         this.isBlocked = isBlocked;
         this.identityType = req.getIdentityType();
         this.identityNumber = req.getIdentityNumber();
+        this.phoneNumber = req.getPhoneNumber();
     }
 
     public CustomersDTO toDTO() {
@@ -60,6 +60,7 @@ public class Customers {
         response.setIdentityType(this.identityType);
         response.setIdentityNumber(this.identityNumber);
         response.setSourceOfIncome(this.sourceOfIncome);
+        response.setPhoneNumber(this.phoneNumber);
         return response;
     }
 

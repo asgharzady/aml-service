@@ -1,4 +1,5 @@
 package com.appopay.aml.entity;
+import com.appopay.aml.util.RiskStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ public class Agent {
     private Long id;
     private String compRegName;
     private String risk;
+    private RiskStatus riskStatus;
     private String compTradeName;
     private String compTaxNumber;
     private String companyRegNumber;

@@ -1,11 +1,8 @@
 package com.appopay.aml.model;
 
-import com.appopay.aml.entity.Address;
 import com.appopay.aml.entity.Agent;
 import com.appopay.aml.entity.Person;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.appopay.aml.util.RiskStatus;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -17,6 +14,7 @@ public class AgentDTO {
     Long id;
     String compRegName;
     String risk;
+    RiskStatus riskStatus;
     String compTradeName;
     String compTaxNumber;
     String companyRegNumber;
@@ -26,7 +24,7 @@ public class AgentDTO {
     AddressDTO currAddress;
     AddressDTO phyAddress;
     AddressDTO postAddress;
-    String mainPhoneNo ;
+    String mainPhoneNo;
     String secPhoneNumber;
     String compWebsite;
     String tradeNameWebsite;
@@ -46,12 +44,13 @@ public class AgentDTO {
     String authsignPosition;
     String financingBankName;
     String financingBankSwiftCode;
-    String fundingAccountName ;
+    String fundingAccountName;
     String fundingAccHolderRelation;
     String currencies;
     List<PersonDTO> beneficialOweners;
     List<PersonDTO> controlOweners;
-    public Agent toEntity(){
+
+    public Agent toEntity() {
         Agent agent = new Agent();
         agent.setId(this.id);
         agent.setCompRegName(this.compRegName);
@@ -62,13 +61,10 @@ public class AgentDTO {
         agent.setCompRegCountry(this.compRegCountry);
         agent.setCompRegDate(this.compRegDate);
         agent.setCompRegProvince(this.compRegProvince);
-        if(this.currAddress != null)
-        agent.setCurrAddress(this.currAddress.toEntity());
-        if(this.phyAddress != null)
-        agent.setPhyAddress(this.phyAddress.toEntity());
-        if(this.postAddress != null)
-        agent.setPostAddress(this.postAddress.toEntity());
-        agent.setMainPhoneNo(this.mainPhoneNo );
+        if (this.currAddress != null) agent.setCurrAddress(this.currAddress.toEntity());
+        if (this.phyAddress != null) agent.setPhyAddress(this.phyAddress.toEntity());
+        if (this.postAddress != null) agent.setPostAddress(this.postAddress.toEntity());
+        agent.setMainPhoneNo(this.mainPhoneNo);
         agent.setSecPhoneNumber(this.secPhoneNumber);
         agent.setCompWebsite(this.compWebsite);
         agent.setTradeNameWebsite(this.tradeNameWebsite);
@@ -88,19 +84,19 @@ public class AgentDTO {
         agent.setAuthsignPosition(this.authsignPosition);
         agent.setFinancingBankName(this.financingBankName);
         agent.setFinancingBankSwiftCode(this.financingBankSwiftCode);
-        agent.setFundingAccountName(this.fundingAccountName );
+        agent.setFundingAccountName(this.fundingAccountName);
         agent.setFundingAccHolderRelation(this.fundingAccHolderRelation);
         agent.setCurrencies(this.currencies);
         List<Person> beneficialOweners = new ArrayList<>();
-        if(this.getBeneficialOweners() != null){
-            for(PersonDTO personDTO: this.getBeneficialOweners()){
+        if (this.getBeneficialOweners() != null) {
+            for (PersonDTO personDTO : this.getBeneficialOweners()) {
                 beneficialOweners.add(personDTO.toEntity());
             }
         }
         agent.setBeneficialOweners(beneficialOweners);
         List<Person> controlOweners = new ArrayList<>();
-        if(this.getControlOweners() != null){
-            for(PersonDTO personDTO: this.getControlOweners()){
+        if (this.getControlOweners() != null) {
+            for (PersonDTO personDTO : this.getControlOweners()) {
                 controlOweners.add(personDTO.toEntity());
             }
         }

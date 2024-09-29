@@ -3,6 +3,7 @@ package com.appopay.aml.model;
 import com.appopay.aml.entity.Agent;
 import com.appopay.aml.entity.Merchant;
 import com.appopay.aml.entity.MerchantPEPFamily;
+import com.appopay.aml.util.RiskStatus;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class MerchantDTO {
     String legalName;
     String tradeName;
     String risk;
+    RiskStatus riskStatus;
     String typeOfBusiness;
     String startDate;
     String country;

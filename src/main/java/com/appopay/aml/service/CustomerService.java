@@ -11,6 +11,7 @@ import com.appopay.aml.repository.CustomerRepository;
 import com.appopay.aml.repository.IdRepository;
 import com.appopay.aml.repository.TransactionRepository;
 import com.appopay.aml.util.Constants;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,37 +19,29 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.springframework.web.multipart.MultipartFile;
-
 @Service
 public class CustomerService {
 
+    private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
     private CountryRiskConfigRepository countryRiskConfigRepository;
     @Autowired
     private TransactionRepository transactionRepository;
-
     @Autowired
     private IdRepository idRepository;
     @Autowired
     private S3Service s3Service;
-
     @Value("${s3Url}")
     private String baseUrl;
-
-
-    private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
-
 
     public PaginatedCustomers findAll(Pageable pageable) {
         PaginatedCustomers response = new PaginatedCustomers();
@@ -59,8 +52,7 @@ public class CustomerService {
 
     public CustomersDTO findById(String id) {
         Optional<Customers> optionalCustomers = customerRepository.findById(id);
-        if (optionalCustomers.isPresent())
-            return optionalCustomers.get().toDTO();
+        if (optionalCustomers.isPresent()) return optionalCustomers.get().toDTO();
         else {
             throw new CustomException("customer not found");
         }
@@ -81,15 +73,12 @@ public class CustomerService {
             Long countryRisk = 0L;
             Long risk;
             boolean isBlocked = false;
-            if (countryRiskConfig != null)
-                countryRisk = Long.valueOf(countryRiskConfig.getRiskScoreNationality());
-            if (req.isPoliticallyExposedPerson())
-                risk = (countryRisk + Constants.POLITICALLY_EXPOSED);
+            if (countryRiskConfig != null) countryRisk = Long.valueOf(countryRiskConfig.getRiskScoreNationality());
+            if (req.isPoliticallyExposedPerson()) risk = (countryRisk + Constants.POLITICALLY_EXPOSED);
             else {
                 risk = countryRisk;
             }
-            if (risk > Constants.ALLOWED_RISK)
-                isBlocked = true;
+            if (risk > Constants.ALLOWED_RISK) isBlocked = true;
             customer = new Customers(req, risk.toString(), isBlocked);
             customerRepository.save(customer);
             return new ValidateRiskResDTO(customer.getRiskScore(), true);
@@ -166,32 +155,37 @@ public class CustomerService {
             throw new CustomException("customer not found");
         } else {
             customer = optionalCustomers.get();
-            if (req.getCustomerName() != null)
-                customer.setCustomerName(req.getCustomerName());
-            if (req.getCountryOfOrigin() != null)
-                customer.setCountryOfOrigin(req.getCountryOfOrigin());
-            if (req.getRiskStatus() != null)
-                customer.setRiskStatus(req.getRiskStatus());
-            if (req.getRiskScore() != null)
-                customer.setRiskScore(req.getRiskScore());
-            if (req.getPoliticallyExposedPerson() != null)
-                customer.setPoliticallyExposedPerson(req.getPoliticallyExposedPerson());
-            if (req.getIsBlocked() != null)
-                customer.setBlocked(req.getIsBlocked());
-            if (req.getIdentityType() != null)
-                customer.setIdentityType(req.getIdentityType());
-            if (req.getIdentityNumber() != null)
-                customer.setIdentityNumber(req.getIdentityNumber());
+            if (req.getCustomerName() != null) customer.setCustomerName(req.getCustomerName());
+            if (req.getCountryOfOrigin() != null) customer.setCountryOfOrigin(req.getCountryOfOrigin());
+            if (req.getRiskStatus() != null) customer.setRiskStatus(req.getRiskStatus());
+            if (req.getRiskScore() != null) customer.setRiskScore(req.getRiskScore());
+            if (req.getPoliticallyExposedPerson() != null) setPEPScore(customer, req.getPoliticallyExposedPerson());
+            if (req.getIsBlocked() != null) customer.setBlocked(req.getIsBlocked());
+            if (req.getIdentityType() != null) customer.setIdentityType(req.getIdentityType());
+            if (req.getIdentityNumber() != null) customer.setIdentityNumber(req.getIdentityNumber());
+            if (req.getPhoneNumber() != null) customer.setPhoneNumber(req.getPhoneNumber());
 
             customerRepository.save(customer);
             return customer.toDTO();
         }
     }
 
+    public void setPEPScore(Customers customers, boolean pep) {
+        if (customers.isPoliticallyExposedPerson() != pep) {
+            long riskScore = Long.parseLong(customers.getRiskScore());
+            if (!pep) {
+                customers.setPoliticallyExposedPerson(false);
+                customers.setRiskScore(String.valueOf(riskScore - Constants.POLITICALLY_EXPOSED));
+            } else {
+                customers.setPoliticallyExposedPerson(true);
+                customers.setRiskScore(String.valueOf(riskScore + Constants.POLITICALLY_EXPOSED));
+            }
+        }
+    }
+
     public List<String> uploadId(MultipartFile front, MultipartFile back, UploadIdDTO request) {
         Optional<Customers> optionalCustomers = customerRepository.findById(request.getCustomerId());
-        if (optionalCustomers.isEmpty())
-            throw new CustomException("customer not found");
+        if (optionalCustomers.isEmpty()) throw new CustomException("customer not found");
         else {
             Customers customer = optionalCustomers.get();
             List<String> response = new ArrayList<>();
@@ -235,13 +229,11 @@ public class CustomerService {
         }
     }
 
-
     public IdCard getIdCard(String customerId) {
         Optional<Customers> optionalCustomers = customerRepository.findById(customerId);
         if (optionalCustomers.isPresent()) {
             IdCard idCard = optionalCustomers.get().getIdCard();
-            if (idCard == null)
-                throw new CustomException("id card not found");
+            if (idCard == null) throw new CustomException("id card not found");
             return idCard;
 
         } else {
@@ -250,8 +242,8 @@ public class CustomerService {
     }
 
     @Transactional
-    public Boolean deleteCustomer(String id){
-        if(customerRepository.existsById(id)){
+    public Boolean deleteCustomer(String id) {
+        if (customerRepository.existsById(id)) {
             customerRepository.deleteById(id);
             return true;
         }

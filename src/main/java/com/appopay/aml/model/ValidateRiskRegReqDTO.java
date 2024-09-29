@@ -11,5 +11,6 @@ public class ValidateRiskRegReqDTO {
     private String id;
     private String identityType;
     private String identityNumber;
+    private String phoneNumber;
 
 }

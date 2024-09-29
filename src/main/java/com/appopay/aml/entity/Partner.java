@@ -1,4 +1,6 @@
 package com.appopay.aml.entity;
+
+import com.appopay.aml.util.RiskStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,6 +16,7 @@ public class Partner {
     private Long id;
     private String compRegName;
     private String risk;
+    private RiskStatus riskStatus;
     private String compTradeName;
     private String compTaxNumber;
     private String companyRegNumber;
@@ -32,7 +35,7 @@ public class Partner {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_add_id")
     private Address postAddress;
-    private String mainPhoneNo ;
+    private String mainPhoneNo;
     private String secPhoneNumber;
     private String compWebsite;
     private String tradeNameWebsite;
@@ -52,7 +55,7 @@ public class Partner {
     private String authsignPosition;
     private String financingBankName;
     private String financingBankSwiftCode;
-    private String fundingAccountName ;
+    private String fundingAccountName;
     private String fundingAccHolderRelation;
     private String currencies;
 

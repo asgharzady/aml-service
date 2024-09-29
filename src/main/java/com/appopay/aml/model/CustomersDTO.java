@@ -15,5 +15,6 @@ public class CustomersDTO {
     String identityType;
     String identityNumber;
     String sourceOfIncome;
+    String phoneNumber;
 
 }
