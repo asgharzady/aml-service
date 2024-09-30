@@ -159,12 +159,12 @@ public class CustomerService {
             if (req.getCustomerName() != null) customer.setCustomerName(req.getCustomerName());
             if (req.getPoliticallyExposedPerson() != null) setPEPScore(customer, req.getPoliticallyExposedPerson());
             if (req.getCountryOfOrigin() != null) customer.setCountryOfOrigin(req.getCountryOfOrigin());
+            if (req.getRiskScore() != null) customer.setRiskScore(req.getRiskScore());
             if(req.getRiskStatus() != null){
                 customer.setRiskScore(req.getRiskStatus().getValue());
                 customer.setRiskStatus(RiskStatus.valueOf(req.getRiskStatus().name()));
             }
             if (req.getRiskStatus() != null) customer.setRiskStatus(req.getRiskStatus());
-            if (req.getRiskScore() != null) customer.setRiskScore(req.getRiskScore());
             if (req.getIsBlocked() != null) customer.setBlocked(req.getIsBlocked());
             if (req.getIdentityType() != null) customer.setIdentityType(req.getIdentityType());
             if (req.getIdentityNumber() != null) customer.setIdentityNumber(req.getIdentityNumber());
