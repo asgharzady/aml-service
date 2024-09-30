@@ -2,6 +2,7 @@ package com.appopay.aml.entity;
 
 import com.appopay.aml.model.CustomersDTO;
 import com.appopay.aml.model.ValidateRiskRegReqDTO;
+import com.appopay.aml.util.RiskStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,7 +18,7 @@ public class Customers {
     private String id;
     private String customerName;
     private String countryOfOrigin;
-    private String riskStatus;
+    private RiskStatus riskStatus;
     private String riskScore;
     private boolean politicallyExposedPerson;
     private boolean isBlocked;

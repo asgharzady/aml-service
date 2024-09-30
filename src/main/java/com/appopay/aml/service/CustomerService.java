@@ -11,6 +11,7 @@ import com.appopay.aml.repository.CustomerRepository;
 import com.appopay.aml.repository.IdRepository;
 import com.appopay.aml.repository.TransactionRepository;
 import com.appopay.aml.util.Constants;
+import com.appopay.aml.util.RiskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,10 +157,14 @@ public class CustomerService {
         } else {
             customer = optionalCustomers.get();
             if (req.getCustomerName() != null) customer.setCustomerName(req.getCustomerName());
+            if (req.getPoliticallyExposedPerson() != null) setPEPScore(customer, req.getPoliticallyExposedPerson());
             if (req.getCountryOfOrigin() != null) customer.setCountryOfOrigin(req.getCountryOfOrigin());
+            if(req.getRiskStatus() != null){
+                customer.setRiskScore(req.getRiskStatus().getValue());
+                customer.setRiskStatus(RiskStatus.valueOf(req.getRiskStatus().name()));
+            }
             if (req.getRiskStatus() != null) customer.setRiskStatus(req.getRiskStatus());
             if (req.getRiskScore() != null) customer.setRiskScore(req.getRiskScore());
-            if (req.getPoliticallyExposedPerson() != null) setPEPScore(customer, req.getPoliticallyExposedPerson());
             if (req.getIsBlocked() != null) customer.setBlocked(req.getIsBlocked());
             if (req.getIdentityType() != null) customer.setIdentityType(req.getIdentityType());
             if (req.getIdentityNumber() != null) customer.setIdentityNumber(req.getIdentityNumber());

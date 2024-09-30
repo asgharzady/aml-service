@@ -5,6 +5,7 @@ import com.appopay.aml.entity.Partner;
 import com.appopay.aml.model.PaginatedPartner;
 import com.appopay.aml.model.PartnerDTO;
 import com.appopay.aml.repository.PartnerRepository;
+import com.appopay.aml.util.RiskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class PartnerService {
         if (partnerDTO.getCompRegName() != null) partner.setCompRegName(partnerDTO.getCompRegName());
         if (partnerDTO.getRiskStatus() != null) {
             partner.setRisk(partnerDTO.getRiskStatus().getValue());
-            partner.setRiskStatus(partnerDTO.getRiskStatus());
+            partner.setRiskStatus(RiskStatus.valueOf(partnerDTO.getRiskStatus().name()));
         }
         if (partnerDTO.getCompTradeName() != null) partner.setCompTradeName(partnerDTO.getCompTradeName());
         if (partnerDTO.getCompTaxNumber() != null) partner.setCompTaxNumber(partnerDTO.getCompTaxNumber());

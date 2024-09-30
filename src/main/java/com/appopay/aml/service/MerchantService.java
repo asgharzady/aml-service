@@ -7,6 +7,7 @@ import com.appopay.aml.model.MerchantDTO;
 import com.appopay.aml.model.PaginatedMerchant;
 import com.appopay.aml.repository.CountryRiskConfigRepository;
 import com.appopay.aml.repository.MerchantRepository;
+import com.appopay.aml.util.RiskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class MerchantService {
         if (merchantDTO.getLegalName() != null) merchant.setLegalName(merchantDTO.getLegalName());
         if (merchantDTO.getRiskStatus() != null) {
             merchant.setRisk(merchantDTO.getRiskStatus().getValue());
-            merchant.setRiskStatus(merchantDTO.getRiskStatus());
+            merchant.setRiskStatus(RiskStatus.valueOf(merchantDTO.getRiskStatus().name()));
         }
         if (merchantDTO.getTradeName() != null) merchant.setTradeName(merchantDTO.getTradeName());
         if (merchantDTO.getTypeOfBusiness() != null) merchant.setTypeOfBusiness(merchantDTO.getTypeOfBusiness());

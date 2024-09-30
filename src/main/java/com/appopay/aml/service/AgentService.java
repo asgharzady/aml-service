@@ -5,6 +5,7 @@ import com.appopay.aml.entity.Agent;
 import com.appopay.aml.model.AgentDTO;
 import com.appopay.aml.model.PaginatedAgent;
 import com.appopay.aml.repository.AgentRepository;
+import com.appopay.aml.util.RiskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class AgentService {
         if (agentDTO.getCompRegName() != null) agent.setCompRegName(agentDTO.getCompRegName());
         if(agentDTO.getRiskStatus() != null){
             agent.setRisk(agentDTO.getRiskStatus().getValue());
-            agent.setRiskStatus(agentDTO.getRiskStatus());
+            agent.setRiskStatus(RiskStatus.valueOf(agentDTO.getRiskStatus().name()));
         }
         if (agentDTO.getCompTradeName() != null) agent.setCompTradeName(agentDTO.getCompTradeName());
         if (agentDTO.getCompTaxNumber() != null) agent.setCompTaxNumber(agentDTO.getCompTaxNumber());

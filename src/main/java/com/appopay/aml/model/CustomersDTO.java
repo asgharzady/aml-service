@@ -1,5 +1,6 @@
 package com.appopay.aml.model;
 
+import com.appopay.aml.util.RiskStatus;
 import lombok.Data;
 
 @Data
@@ -8,7 +9,7 @@ public class CustomersDTO {
     String id;
     String customerName;
     String countryOfOrigin;
-    String riskStatus;
+    RiskStatus riskStatus;
     String riskScore;
     Boolean politicallyExposedPerson;
     Boolean isBlocked;
