@@ -5,7 +5,10 @@ import com.appopay.aml.entity.CountryRiskConfig;
 import com.appopay.aml.entity.Customers;
 import com.appopay.aml.entity.Transaction;
 import com.appopay.aml.entity.TransactionRiskConfig;
-import com.appopay.aml.model.*;
+import com.appopay.aml.model.PaginatedTransactions;
+import com.appopay.aml.model.RecordCustomerTrxReqDTO;
+import com.appopay.aml.model.RecordCustomerTrxResDTO;
+import com.appopay.aml.model.TransactionDTO;
 import com.appopay.aml.repository.CountryRiskConfigRepository;
 import com.appopay.aml.repository.CustomerRepository;
 import com.appopay.aml.repository.TransactionRepository;
@@ -21,7 +24,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,10 +48,10 @@ public class TransactionService {
         boolean isAllowed = true;
         Optional<Customers> optionalCustomers = customerRepository.findById(req.getCustomerId());
         Customers customers = null;
-        if(optionalCustomers.isPresent())
+        if (optionalCustomers.isPresent())
             customers = optionalCustomers.get();
-        else{
-            throw  new CustomException("customer not found");
+        else {
+            throw new CustomException("customer not found");
         }
         TransactionRiskConfig transactionRiskConfig = transactionRiskConfigRepository.findAll().get(0);
         LocalDate now = LocalDate.now();
@@ -62,38 +64,57 @@ public class TransactionService {
         Long dailyAmount = dailyTransactions.stream().mapToLong(n -> Long.parseLong(n.getAmount())).sum();
 
         CountryRiskConfig merchantCountryScore = countryRiskConfigRepository.findByCountryIgnoreCase(req.getMerchantLocation());
-        Long riskScore = 0l;
-        if(merchantCountryScore != null)
+        Long riskScore = 0L;
+        if (merchantCountryScore != null)
             riskScore = Long.valueOf(merchantCountryScore.getRiskScoreGeography());
-        if(monthlyAmount + Long.parseLong(req.getTransactionAmount()) >transactionRiskConfig.getMonthlyLimit())
+        if (monthlyAmount + Long.parseLong(req.getTransactionAmount()) > transactionRiskConfig.getMonthlyLimit())
             isAllowed = false;
 
-        else if(dailyAmount + Long.parseLong(req.getTransactionAmount()) > transactionRiskConfig.getDailyLimit())
+        else if (dailyAmount + Long.parseLong(req.getTransactionAmount()) > transactionRiskConfig.getDailyLimit())
             isAllowed = false;
 
-        else if(monthlyTransactions.size() + 1  > transactionRiskConfig.getMonthlyFrequency())
+        else if (monthlyTransactions.size() + 1 > transactionRiskConfig.getMonthlyFrequency())
             isAllowed = false;
 
-        else if(!req.getMerchantLocation().equals(customers.getCountryOfOrigin()))
+        else if (!req.getMerchantLocation().equals(customers.getCountryOfOrigin()))
             isAllowed = false;
 
-        else if(riskScore > Constants.ALLOWED_RISK)
+        else if (riskScore > Constants.ALLOWED_RISK)
             isAllowed = false;
 
 
         boolean isFlagged = !isAllowed;
-        Transaction transaction = new Transaction(req, customers,isFlagged,riskScore.toString());
+        Transaction transaction = new Transaction(req, customers, isFlagged, riskScore.toString());
 
         transactionRepository.save(transaction);
 
-        return new RecordCustomerTrxResDTO(riskScore.toString(),true);
+        return new RecordCustomerTrxResDTO(riskScore.toString(), true);
 
     }
 
-    public PaginatedTransactions getAll(Pageable pageable){
+    public PaginatedTransactions getAll(Pageable pageable) {
         PaginatedTransactions response = new PaginatedTransactions();
         response.setData(transactionRepository.findAll(pageable).stream().collect(Collectors.toList()));
         response.setDocuments(transactionRepository.count());
         return response;
+    }
+
+    public Transaction updateOne(TransactionDTO req) {
+        Optional<Transaction> optionalTransaction = transactionRepository.findById(req.getId());
+        Transaction transaction = null;
+        if (optionalTransaction.isEmpty()) {
+            throw new CustomException("transaction not found");
+        } else {
+            transaction = optionalTransaction.get();
+            if (req.getAmount() != null) transaction.setAmount(req.getAmount());
+            if (req.getType() != null) transaction.setType(req.getType());
+            if (req.getDescription() != null) transaction.setDescription(req.getDescription());
+            if (req.getMerchantLocation() != null) transaction.setMerchantLocation(req.getMerchantLocation());
+            if (req.getIsAllowed() != null) transaction.setAllowed(req.getIsAllowed());
+            if (req.getIsFlagged() != null) transaction.setFlagged(req.getIsFlagged());
+            if (req.getRiskScore() != null) transaction.setRiskScore(req.getRiskScore());
+            return transactionRepository.save(transaction);
+
+        }
     }
 }
