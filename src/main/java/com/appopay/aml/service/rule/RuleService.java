@@ -1,8 +1,11 @@
 package com.appopay.aml.service.rule;
 
+import com.appopay.aml.Exception.CustomException;
+import com.appopay.aml.entity.Agent;
 import com.appopay.aml.entity.ruleConfig.Rule;
 import com.appopay.aml.entity.ruleConfig.RuleConditions;
 import com.appopay.aml.model.TransactionDTO;
+import com.appopay.aml.model.rule.RuleDTO;
 import com.appopay.aml.repository.rule.ConditionLogicRepository;
 import com.appopay.aml.repository.rule.RuleRepository;
 import org.slf4j.Logger;
@@ -24,6 +27,13 @@ public class RuleService {
     private ConditionLogicRepository conditionLogicRepository;
 
 
+    public Rule create(RuleDTO ruleDTO){
+        if (ruleDTO.getId() != null) {
+            throw new CustomException("new rule can not have ID");
+        } else {
+            return ruleRepository.save(ruleDTO.toEntity());
+        }
+    }
     public boolean checkValidity(TransactionDTO req) {
         List<Rule> rules = ruleRepository.findAllByIsActive(true);
         boolean isValid = true;
@@ -37,7 +47,6 @@ public class RuleService {
         }
         return isValid;
     }
-
     public long getFlagCount(TransactionDTO req, List<RuleConditions> ruleConditionsList) {
         long checkCount = 0;
         for (RuleConditions ruleCondition : ruleConditionsList) {

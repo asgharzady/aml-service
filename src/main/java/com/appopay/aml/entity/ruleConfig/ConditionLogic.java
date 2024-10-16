@@ -19,9 +19,4 @@ public class ConditionLogic {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "rule_id")
     private Rule ruleId;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "logic_id")
-    private List<RuleConditions> ruleConditions;
-
 }
