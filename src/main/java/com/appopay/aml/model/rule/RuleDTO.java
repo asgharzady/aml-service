@@ -2,6 +2,7 @@ package com.appopay.aml.model.rule;
 
 import com.appopay.aml.entity.ruleConfig.Rule;
 import com.appopay.aml.entity.ruleConfig.RuleConditions;
+import jakarta.validation.Valid;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -14,7 +15,9 @@ public class RuleDTO {
     String description;
     String type;
     Boolean isActive;
+    @Valid
     List<RuleConditionsDTO> ruleConditionsDTO;
+
     public Rule toEntity() {
         Rule rule = new Rule();
         rule.setId(this.id);
