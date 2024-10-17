@@ -31,6 +31,12 @@ public class RuleController {
         return ResponseEntity.ok().body(ruleService.getById(id));
     }
 
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> deleteRule(@PathVariable("id") long id) {
+        ruleService.deleteEntityById(id);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping(value = "/findAll/{page}/{size}")
     public ResponseEntity<PaginatedRule> getAllRules(@PathVariable("page") Integer page, @PathVariable("size") Integer size) {
         return ResponseEntity.ok().body(ruleService.findAll(PageRequest.of(page, size)));

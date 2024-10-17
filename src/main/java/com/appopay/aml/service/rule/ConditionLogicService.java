@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -54,6 +55,13 @@ public class ConditionLogicService {
         response.setData(conditionLogicRepository.findAll(pageable).stream().toList());
         response.setTotalDocuments(conditionLogicRepository.count());
         return response;
+    }
+
+    @Transactional
+    public void deleteEntityByRuleId(Rule rule) {
+        if (conditionLogicRepository.existsByRuleId(rule)) {
+            conditionLogicRepository.deleteByRuleId(rule);
+        }
     }
 
 }

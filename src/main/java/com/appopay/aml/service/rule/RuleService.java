@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,12 +30,25 @@ public class RuleService {
     @Autowired
     private ConditionLogicRepository conditionLogicRepository;
 
+    @Autowired
+    private ConditionLogicService conditionLogicService;
+
     public Rule getById(Long id) {
         Optional<Rule> rule = ruleRepository.findById(id);
         if (rule.isPresent()) {
             return rule.get();
         }
         throw new CustomException("Rule not found");
+    }
+
+    @Transactional
+    public void deleteEntityById(Long id) {
+        if (ruleRepository.existsById(id)) {
+            conditionLogicService.deleteEntityByRuleId(ruleRepository.findById(id).get());
+            ruleRepository.deleteById(id);
+        } else {
+            throw new CustomException("Entity with ID " + id + " not found.");
+        }
     }
     public PaginatedRule findAll(Pageable pageable) {
         PaginatedRule response = new PaginatedRule();
