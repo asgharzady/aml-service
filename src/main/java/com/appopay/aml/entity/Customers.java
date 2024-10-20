@@ -1,7 +1,7 @@
 package com.appopay.aml.entity;
 
 import com.appopay.aml.model.CustomersDTO;
-import com.appopay.aml.model.ValidateRiskRegReqDTO;
+import com.appopay.aml.model.customer.ValidateRiskRegReqDTO;
 import com.appopay.aml.util.RiskStatus;
 import jakarta.persistence.*;
 import lombok.Data;

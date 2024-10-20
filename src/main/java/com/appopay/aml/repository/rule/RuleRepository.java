@@ -11,5 +11,5 @@ import java.util.List;
 public interface RuleRepository extends JpaRepository<Rule, Long> {
 
 
-    List<Rule> findAllByIsActive(boolean isActive);
+    List<Rule> findAllByIsActiveAndTargetIgnoreCase(boolean isActive,String transaction);
 }

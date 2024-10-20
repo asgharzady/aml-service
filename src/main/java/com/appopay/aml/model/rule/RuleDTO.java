@@ -15,8 +15,8 @@ public class RuleDTO {
     String description;
     String type;
     Boolean isActive;
-    @Valid
-    List<RuleConditionsDTO> ruleConditionsDTO;
+    String target;
+    @Valid List<RuleConditionsDTO> ruleConditionsDTO;
 
     public Rule toEntity() {
         Rule rule = new Rule();
@@ -25,6 +25,7 @@ public class RuleDTO {
         rule.setDescription(this.description);
         rule.setType(this.type);
         rule.setActive(this.isActive);
+        rule.setTarget(this.target);
         List<RuleConditions> ruleConditions = new ArrayList<>();
         if (this.getRuleConditionsDTO() != null) {
             for (RuleConditionsDTO dto : this.getRuleConditionsDTO()) {

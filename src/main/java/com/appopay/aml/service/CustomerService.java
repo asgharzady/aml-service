@@ -1,15 +1,18 @@
 package com.appopay.aml.service;
 
 import com.appopay.aml.Exception.CustomException;
-import com.appopay.aml.entity.CountryRiskConfig;
 import com.appopay.aml.entity.Customers;
 import com.appopay.aml.entity.IdCard;
 import com.appopay.aml.entity.Transaction;
 import com.appopay.aml.model.*;
+import com.appopay.aml.model.customer.ValidateRiskRegReqDTO;
+import com.appopay.aml.model.customer.ValidateRiskResDTO;
+import com.appopay.aml.model.customer.ValidateRiskResV2DTO;
+import com.appopay.aml.model.customer.ValidateRiskVIPReqDTO;
 import com.appopay.aml.repository.CountryRiskConfigRepository;
 import com.appopay.aml.repository.CustomerRepository;
-import com.appopay.aml.repository.IdRepository;
 import com.appopay.aml.repository.TransactionRepository;
+import com.appopay.aml.service.rule.RuleService;
 import com.appopay.aml.util.Constants;
 import com.appopay.aml.util.RiskStatus;
 import org.slf4j.Logger;
@@ -38,9 +41,11 @@ public class CustomerService {
     @Autowired
     private TransactionRepository transactionRepository;
     @Autowired
-    private IdRepository idRepository;
-    @Autowired
     private S3Service s3Service;
+
+    @Autowired
+    private RuleService ruleService;
+
     @Value("${s3Url}")
     private String baseUrl;
 
@@ -59,7 +64,35 @@ public class CustomerService {
         }
     }
 
-    public ValidateRiskResDTO validateRegAccount(ValidateRiskRegReqDTO req) {
+//    public ValidateRiskResDTO validateRegAccount(ValidateRiskRegReqDTO req) {
+//        log.info("validating reg account with customer id " + req.getId());
+//        Optional<Customers> optionalCustomers = customerRepository.findById(req.getId());
+//        Customers customer = null;
+//
+//        if (optionalCustomers.isPresent()) {
+//            log.info("customer present " + req.getId());
+//            customer = optionalCustomers.get();
+//            return new ValidateRiskResDTO(customer.getRiskScore(), !customer.isBlocked());
+//
+//        } else {
+//            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountryIgnoreCase(req.getCountryOfOrigin());
+//            Long countryRisk = 0L;
+//            Long risk;
+//            boolean isBlocked = false;
+//            if (countryRiskConfig != null) countryRisk = Long.valueOf(countryRiskConfig.getRiskScoreNationality());
+//            if (req.isPoliticallyExposedPerson()) risk = (countryRisk + Constants.POLITICALLY_EXPOSED);
+//            else {
+//                risk = countryRisk;
+//            }
+//            if (risk > Constants.ALLOWED_RISK) isBlocked = true;
+//            customer = new Customers(req, risk.toString(), isBlocked);
+//            customerRepository.save(customer);
+//            return new ValidateRiskResDTO(customer.getRiskScore(), true);
+//        }
+//
+//    }
+
+    public ValidateRiskResV2DTO validateRegAccount(ValidateRiskRegReqDTO req) {
         log.info("validating reg account with customer id " + req.getId());
         Optional<Customers> optionalCustomers = customerRepository.findById(req.getId());
         Customers customer = null;
@@ -67,22 +100,12 @@ public class CustomerService {
         if (optionalCustomers.isPresent()) {
             log.info("customer present " + req.getId());
             customer = optionalCustomers.get();
-            return new ValidateRiskResDTO(customer.getRiskScore(), !customer.isBlocked());
-
+            return new ValidateRiskResV2DTO(false,customer.getId(),!customer.isBlocked());
         } else {
-            CountryRiskConfig countryRiskConfig = countryRiskConfigRepository.findByCountryIgnoreCase(req.getCountryOfOrigin());
-            Long countryRisk = 0L;
-            Long risk;
-            boolean isBlocked = false;
-            if (countryRiskConfig != null) countryRisk = Long.valueOf(countryRiskConfig.getRiskScoreNationality());
-            if (req.isPoliticallyExposedPerson()) risk = (countryRisk + Constants.POLITICALLY_EXPOSED);
-            else {
-                risk = countryRisk;
-            }
-            if (risk > Constants.ALLOWED_RISK) isBlocked = true;
-            customer = new Customers(req, risk.toString(), isBlocked);
-            customerRepository.save(customer);
-            return new ValidateRiskResDTO(customer.getRiskScore(), true);
+            boolean isBlocked = !ruleService.checkValidity(req);
+            customer = new Customers(req, null, isBlocked); // risk score is removed after rule config
+            customer = customerRepository.save(customer);
+            return new ValidateRiskResV2DTO(true,customer.getId(),!isBlocked);
         }
 
     }

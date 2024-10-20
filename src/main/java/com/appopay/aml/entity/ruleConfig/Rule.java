@@ -18,6 +18,7 @@ public class Rule {
     private String name;
     private String description;
     private String type;
+    private String target;
     private boolean isActive;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "rule_id")

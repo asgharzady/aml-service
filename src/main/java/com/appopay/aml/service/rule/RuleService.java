@@ -4,11 +4,11 @@ import com.appopay.aml.Exception.CustomException;
 import com.appopay.aml.entity.ruleConfig.Rule;
 import com.appopay.aml.entity.ruleConfig.RuleConditions;
 import com.appopay.aml.model.TransactionDTO;
+import com.appopay.aml.model.customer.ValidateRiskRegReqDTO;
 import com.appopay.aml.model.rule.PaginatedRule;
 import com.appopay.aml.model.rule.RuleDTO;
 import com.appopay.aml.repository.rule.ConditionLogicRepository;
 import com.appopay.aml.repository.rule.RuleRepository;
-import com.appopay.aml.util.RiskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +50,7 @@ public class RuleService {
             throw new CustomException("Entity with ID " + id + " not found.");
         }
     }
+
     public PaginatedRule findAll(Pageable pageable) {
         PaginatedRule response = new PaginatedRule();
         response.setData(ruleRepository.findAll(pageable).stream().toList());
@@ -65,7 +66,7 @@ public class RuleService {
         }
     }
 
-    public Rule activate(long id,boolean isActive) {
+    public Rule activate(long id, boolean isActive) {
         Optional<Rule> optionalRule = ruleRepository.findById(id);
         if (optionalRule.isEmpty()) {
             throw new CustomException("rule not found");
@@ -78,7 +79,7 @@ public class RuleService {
     }
 
     public boolean checkValidity(TransactionDTO req) {
-        List<Rule> rules = ruleRepository.findAllByIsActive(true);
+        List<Rule> rules = ruleRepository.findAllByIsActiveAndTargetIgnoreCase(true, "Transaction");
         boolean isValid = true;
         for (Rule rule : rules) {
             long checkCount = getFlagCount(req, rule.getRuleConditions());
@@ -111,6 +112,46 @@ public class RuleService {
             } else if (ruleCondition.getField().equals("ACCOUNT_STATUS")) {
             } else if (ruleCondition.getField().equals("DEVICE_ID")) {
             }
+        }
+        return checkCount;
+    }
+
+    public boolean checkValidity(ValidateRiskRegReqDTO req) {
+        List<Rule> rules = ruleRepository.findAllByIsActiveAndTargetIgnoreCase(true, "Customer");
+        boolean isValid = true;
+        for (Rule rule : rules) {
+            long checkCount = getFlagCount(req, rule.getRuleConditions());
+            boolean allRequired = conditionLogicRepository.findByRuleId(rule).isAllRequired();
+            if (allRequired && checkCount == rule.getRuleConditions().size()) isValid = false;
+            else if (!allRequired && checkCount > 0) {
+                isValid = false;
+            }
+        }
+        return isValid;
+    }
+
+    public long getFlagCount(ValidateRiskRegReqDTO req, List<RuleConditions> ruleConditionsList) {
+        long checkCount = 0;
+        for (RuleConditions ruleCondition : ruleConditionsList) {
+
+            if (ruleCondition.getField().equals("PEP")) {
+                if (ruleCondition.getCheckConstraint().equals("NOT_ALLOWED")) {
+                    if (req.isPoliticallyExposedPerson()) checkCount++;
+                }
+            }
+
+            if (ruleCondition.getField().equals("OCCUPATION")) {
+                if (ruleCondition.getCheckConstraint().equals("NOT_ALLOWED")) {
+                    if (req.getOccupation().equals(ruleCondition.getValue())) checkCount++;
+                }
+            }
+
+            if (ruleCondition.getField().equals("LOCATION")) {
+                if (ruleCondition.getCheckConstraint().equals("NOT_ALLOWED")) {
+                    if (req.getCountryOfOrigin().equals(ruleCondition.getValue())) checkCount++;
+                }
+            }
+
         }
         return checkCount;
     }

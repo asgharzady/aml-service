@@ -1,24 +1,22 @@
 package com.appopay.aml.controller;
 
 
-import com.appopay.aml.entity.Customers;
 import com.appopay.aml.entity.IdCard;
 import com.appopay.aml.model.*;
+import com.appopay.aml.model.customer.ValidateRiskRegReqDTO;
+import com.appopay.aml.model.customer.ValidateRiskResDTO;
+import com.appopay.aml.model.customer.ValidateRiskResV2DTO;
+import com.appopay.aml.model.customer.ValidateRiskVIPReqDTO;
 import com.appopay.aml.service.CustomerService;
-import com.appopay.aml.service.S3Service;
 import com.appopay.aml.service.TransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -38,8 +36,14 @@ public class CustomerController {
         return ResponseEntity.ok().body(customerService.updateCustomer(customers));
     }
 
+//    @PostMapping(value = "/validateRegularAcc")
+//    public ResponseEntity<ValidateRiskResDTO> ValidateCustomerRiskProfileRegularAccount(@RequestBody ValidateRiskRegReqDTO request) {
+//        log.info("creating customer with id: "+ request.getId());
+//        return ResponseEntity.ok().body(customerService.validateRegAccount(request));
+//    }
+
     @PostMapping(value = "/validateRegularAcc")
-    public ResponseEntity<ValidateRiskResDTO> ValidateCustomerRiskProfileRegularAccount(@RequestBody ValidateRiskRegReqDTO request) {
+    public ResponseEntity<ValidateRiskResV2DTO> ValidateCustomerRiskProfileRegularAccount(@RequestBody ValidateRiskRegReqDTO request) {
         log.info("creating customer with id: "+ request.getId());
         return ResponseEntity.ok().body(customerService.validateRegAccount(request));
     }

@@ -1,4 +1,4 @@
-package com.appopay.aml.model;
+package com.appopay.aml.model.customer;
 
 import lombok.Data;
 
@@ -12,5 +12,7 @@ public class ValidateRiskRegReqDTO {
     private String identityType;
     private String identityNumber;
     private String phoneNumber;
+
+    private String occupation;
 
 }

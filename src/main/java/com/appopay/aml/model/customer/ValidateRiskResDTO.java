@@ -1,4 +1,4 @@
-package com.appopay.aml.model;
+package com.appopay.aml.model.customer;
 
 import lombok.Data;
 
