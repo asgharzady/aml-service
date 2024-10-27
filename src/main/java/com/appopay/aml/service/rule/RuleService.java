@@ -1,12 +1,15 @@
 package com.appopay.aml.service.rule;
 
 import com.appopay.aml.Exception.CustomException;
+import com.appopay.aml.entity.Customers;
+import com.appopay.aml.entity.Transaction;
 import com.appopay.aml.entity.ruleConfig.Rule;
 import com.appopay.aml.entity.ruleConfig.RuleConditions;
-import com.appopay.aml.model.TransactionDTO;
 import com.appopay.aml.model.customer.ValidateRiskRegReqDTO;
 import com.appopay.aml.model.rule.PaginatedRule;
 import com.appopay.aml.model.rule.RuleDTO;
+import com.appopay.aml.model.transaction.TransactionValidatorModel;
+import com.appopay.aml.repository.TransactionRepository;
 import com.appopay.aml.repository.rule.ConditionLogicRepository;
 import com.appopay.aml.repository.rule.RuleRepository;
 import org.slf4j.Logger;
@@ -16,6 +19,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +39,9 @@ public class RuleService {
 
     @Autowired
     private ConditionLogicService conditionLogicService;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     public Rule getById(Long id) {
         Optional<Rule> rule = ruleRepository.findById(id);
@@ -78,11 +88,11 @@ public class RuleService {
 
     }
 
-    public boolean checkValidity(TransactionDTO req) {
+    public boolean checkValidity(TransactionValidatorModel req, List<Transaction> customerTransactions, Customers customers) {
         List<Rule> rules = ruleRepository.findAllByIsActiveAndTargetIgnoreCase(true, "Transaction");
         boolean isValid = true;
         for (Rule rule : rules) {
-            long checkCount = getFlagCount(req, rule.getRuleConditions());
+            long checkCount = getFlagCount(req, rule.getRuleConditions(), customerTransactions, customers);
             boolean allRequired = conditionLogicRepository.findByRuleId(rule).isAllRequired();
             if (allRequired && checkCount == rule.getRuleConditions().size()) isValid = false;
             else if (!allRequired && checkCount > 0) {
@@ -92,10 +102,25 @@ public class RuleService {
         return isValid;
     }
 
-    public long getFlagCount(TransactionDTO req, List<RuleConditions> ruleConditionsList) {
+    public long getFlagCount(TransactionValidatorModel req, List<RuleConditions> ruleConditionsList, List<Transaction> customerTransactions, Customers customer) {
         long checkCount = 0;
         for (RuleConditions ruleCondition : ruleConditionsList) {
             if (ruleCondition.getField().equals("TRANSACTION_FREQUENCY")) {
+                String[] parts = ruleCondition.getValue().split(",");
+                int number = Integer.parseInt(parts[0]);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                LocalDateTime startDate = LocalDateTime.parse(parts[1], formatter);
+                LocalDateTime endDate = LocalDateTime.parse(parts[2], formatter);
+                Instant start = startDate.toInstant(ZoneOffset.UTC);
+                Instant end = endDate.toInstant(ZoneOffset.UTC);
+                Instant now = Instant.now();
+                int count = transactionRepository.countAllByCustomersAndCreatedAtBetween(customer, start, end);
+                if (end.isAfter(now)) count++;
+                if (ruleCondition.getCheckConstraint().equals("GREATER_THAN")) {
+                    if (count > number) checkCount++;
+                } else if (ruleCondition.getCheckConstraint().equals("EQUAL_TO")) {
+                    if (count >= number) checkCount++;
+                }
             } else if (ruleCondition.getField().equals("TRANSACTION_AMOUNT")) {
                 if (ruleCondition.getCheckConstraint().equals("GREATER_THAN")) {
                     if (Long.parseLong(req.getAmount()) > Long.parseLong(ruleCondition.getValue())) checkCount++;
@@ -106,10 +131,13 @@ public class RuleService {
                 }
 
             } else if (ruleCondition.getField().equals("IP_LOCATION")) {
-                if (ruleCondition.getCheckConstraint().equals("IN_COUNTRY")) {
-                    if (req.getMerchantLocation().equals(ruleCondition.getValue())) checkCount++;
+                if (ruleCondition.getCheckConstraint().equals("NOT_ALLOWED")) {
+                    if (req.getIpLocation().equals(ruleCondition.getValue())) checkCount++;
                 }
             } else if (ruleCondition.getField().equals("ACCOUNT_STATUS")) {
+                if (ruleCondition.getCheckConstraint().equals("NOT_ALLOWED")) {
+                    if (req.getStatus().equals(ruleCondition.getValue())) checkCount++;
+                }
             } else if (ruleCondition.getField().equals("DEVICE_ID")) {
             }
         }

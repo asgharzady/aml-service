@@ -21,10 +21,10 @@ public class RuleController {
     @Autowired
     private RuleService ruleService;
 
-    @PostMapping("/testTrx")
-    public ResponseEntity<Boolean> testTrx(TransactionDTO transaction) {
-        return ResponseEntity.ok(ruleService.checkValidity(transaction));
-    }
+//    @PostMapping("/testTrx")
+//    public ResponseEntity<Boolean> testTrx(TransactionDTO transaction) {
+//        return ResponseEntity.ok(ruleService.checkValidity(transaction));
+//    }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<Rule> getRule(@PathVariable("id") long id) {

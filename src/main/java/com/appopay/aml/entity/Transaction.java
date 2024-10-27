@@ -1,7 +1,7 @@
 package com.appopay.aml.entity;
 
 import com.appopay.aml.model.CustomerTrxResDTO;
-import com.appopay.aml.model.RecordCustomerTrxReqDTO;
+import com.appopay.aml.model.transaction.RecordCustomerTrxReqDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;

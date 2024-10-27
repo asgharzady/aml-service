@@ -7,6 +7,8 @@ import com.appopay.aml.model.customer.ValidateRiskRegReqDTO;
 import com.appopay.aml.model.customer.ValidateRiskResDTO;
 import com.appopay.aml.model.customer.ValidateRiskResV2DTO;
 import com.appopay.aml.model.customer.ValidateRiskVIPReqDTO;
+import com.appopay.aml.model.transaction.RecordCustomerTrxReqDTO;
+import com.appopay.aml.model.transaction.RecordCustomerTrxResDTO;
 import com.appopay.aml.service.CustomerService;
 import com.appopay.aml.service.TransactionService;
 import org.slf4j.Logger;
