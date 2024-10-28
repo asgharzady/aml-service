@@ -169,9 +169,9 @@ public class RuleService {
             }
 
             if (ruleCondition.getField().equals("OCCUPATION")) {
-                if (ruleCondition.getCheckConstraint().equals("NOT_ALLOWED")) {
-                    if (req.getOccupation().equals(ruleCondition.getValue())) checkCount++;
-                }
+//                if (ruleCondition.getCheckConstraint().equals("NOT_ALLOWED")) {
+//                    if (req.getOccupation().equals(ruleCondition.getValue())) checkCount++;
+//                }
             }
 
             if (ruleCondition.getField().equals("LOCATION")) {
