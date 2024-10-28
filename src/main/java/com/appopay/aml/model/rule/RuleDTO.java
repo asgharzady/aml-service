@@ -16,7 +16,8 @@ public class RuleDTO {
     String type;
     Boolean isActive;
     String target;
-    @Valid List<RuleConditionsDTO> ruleConditionsDTO;
+    @Valid
+    List<RuleConditionsDTO> ruleConditionsDTO;
 
     public Rule toEntity() {
         Rule rule = new Rule();

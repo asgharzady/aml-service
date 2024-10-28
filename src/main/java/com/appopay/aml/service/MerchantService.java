@@ -70,7 +70,7 @@ public class MerchantService {
         if (merchantDTO.getContactEmail() != null) merchant.setContactEmail(merchantDTO.getContactEmail());
         if (merchantDTO.getMonthlySales() != null) merchant.setMonthlySales(merchantDTO.getMonthlySales());
         if (merchantDTO.getTransactionTypech() != null)
-            merchant.setTransactionTypech(merchantDTO.getTransactionTypech());
+            merchant.setTransactionTypech(String.join(",", merchantDTO.getTransactionTypech()));
         if (merchantDTO.getAverageTicket() != null) merchant.setAverageTicket(merchantDTO.getAverageTicket());
         if (merchantDTO.getMonthlyTransactions() != null)
             merchant.setMonthlyTransactions(merchantDTO.getMonthlyTransactions());

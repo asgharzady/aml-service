@@ -1,6 +1,9 @@
 package com.appopay.aml.model;
 
 public class ResponseDTO {
-    String status = "200";
     String message;
+
+    public ResponseDTO(String message) {
+        this.message = message;
+    }
 }

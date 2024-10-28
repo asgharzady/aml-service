@@ -33,7 +33,7 @@ public class MerchantDTO {
     String contactTelephone;
     String contactEmail;
     String monthlySales;
-    String transactionTypech;
+    List<String> transactionTypech;
     String averageTicket;
     String monthlyTransactions;
     String commercialReferences;
@@ -69,7 +69,7 @@ public class MerchantDTO {
         merchant.setContactTelephone(this.getContactTelephone());
         merchant.setContactEmail(this.getContactEmail());
         merchant.setMonthlySales(this.getMonthlySales());
-        merchant.setTransactionTypech(this.getTransactionTypech());
+        merchant.setTransactionTypech(String.join(",", this.getTransactionTypech()));
         merchant.setAverageTicket(this.getAverageTicket());
         merchant.setMonthlyTransactions(this.getMonthlyTransactions());
         merchant.setCommercialReferences(this.getCommercialReferences());
