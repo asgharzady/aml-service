@@ -1,16 +1,14 @@
 package com.appopay.aml.service;
+
 import com.appopay.aml.Exception.CustomException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
-import software.amazon.awssdk.core.sync.RequestBody;
-import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,13 +20,21 @@ public class S3Service {
     private final S3Client s3Client;
     private final String bucketName;
 
-    public S3Service(@Value("${accessKeyId}") String accessKeyId,
-                     @Value("${secretAccessKey}") String secretAccessKey) {
+    //    public S3Service(@Value("${accessKeyId}") String accessKeyId,
+//                     @Value("${secretAccessKey}") String secretAccessKey) {
+//        String bucketName = "appopay-aml-frontend";
+//        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKeyId, secretAccessKey);
+//        this.s3Client = S3Client.builder()
+//                .region(Region.US_EAST_2)  // Set your desired region
+//                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
+//                .build();
+//        this.bucketName = bucketName;
+//    }
+    public S3Service() {
         String bucketName = "appopay-aml-frontend";
-        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKeyId, secretAccessKey);
         this.s3Client = S3Client.builder()
                 .region(Region.US_EAST_2)  // Set your desired region
-                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
+                // No explicit credentials provider, the SDK will automatically retrieve credentials from the environment or instance profile
                 .build();
         this.bucketName = bucketName;
     }
