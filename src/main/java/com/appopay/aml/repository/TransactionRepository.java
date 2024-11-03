@@ -16,5 +16,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findAllByCustomers(Customers customer);
 
     int countAllByCustomersAndCreatedAtBetween(Customers customer,Instant start, Instant end);
+    List<Transaction> findAllByCustomersAndCreatedAtBetween(Customers customer,Instant start, Instant end);
 
 }

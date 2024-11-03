@@ -1,6 +1,5 @@
 package com.appopay.aml.model;
 
-import com.appopay.aml.entity.Person;
 import com.appopay.aml.entity.Transaction;
 import lombok.Data;
 
@@ -15,6 +14,8 @@ public class TransactionDTO {
     Boolean isAllowed;
     Boolean isFlagged;
     String riskScore;
+
+    //TODO ADD PHONE NO
 
     public Transaction toEntity() {
         Transaction transaction = new Transaction();

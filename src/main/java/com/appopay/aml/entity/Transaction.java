@@ -25,7 +25,6 @@ public class Transaction {
     private boolean isFlagged;
 
     private String riskScore;
-
     @CreationTimestamp
     private Instant createdAt;
     @UpdateTimestamp

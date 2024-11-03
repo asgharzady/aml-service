@@ -12,6 +12,7 @@ import com.appopay.aml.model.transaction.TransactionValidatorModel;
 import com.appopay.aml.repository.TransactionRepository;
 import com.appopay.aml.repository.rule.ConditionLogicRepository;
 import com.appopay.aml.repository.rule.RuleRepository;
+import com.appopay.aml.rest.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +44,9 @@ public class RuleService {
 
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @Autowired
+    private RestClient restClient;
 
     public Rule getById(Long id) {
         Optional<Rule> rule = ruleRepository.findById(id);
@@ -88,11 +93,11 @@ public class RuleService {
 
     }
 
-    public boolean checkValidity(TransactionValidatorModel req, List<Transaction> customerTransactions, Customers customers) {
+    public boolean checkValidity(TransactionValidatorModel req, Customers customers) {
         List<Rule> rules = ruleRepository.findAllByIsActiveAndTargetIgnoreCase(true, "Transaction");
         boolean isValid = true;
         for (Rule rule : rules) {
-            long checkCount = getFlagCount(req, rule.getRuleConditions(), customerTransactions, customers);
+            long checkCount = getFlagCount(req, rule.getRuleConditions(), customers);
             boolean allRequired = conditionLogicRepository.findByRuleId(rule).isAllRequired();
             if (allRequired && checkCount == rule.getRuleConditions().size()) isValid = false;
             else if (!allRequired && checkCount > 0) {
@@ -102,7 +107,7 @@ public class RuleService {
         return isValid;
     }
 
-    public long getFlagCount(TransactionValidatorModel req, List<RuleConditions> ruleConditionsList, List<Transaction> customerTransactions, Customers customer) {
+    public long getFlagCount(TransactionValidatorModel req, List<RuleConditions> ruleConditionsList, Customers customer) {
         long checkCount = 0;
         for (RuleConditions ruleCondition : ruleConditionsList) {
             if (ruleCondition.getField().equals("TRANSACTION_FREQUENCY")) {
@@ -129,7 +134,25 @@ public class RuleService {
                 } else if (ruleCondition.getCheckConstraint().equals("EQUALS")) {
                     if (Long.parseLong(req.getAmount()) == Long.parseLong(ruleCondition.getValue())) checkCount++;
                 }
+            } else if (ruleCondition.getField().equals("DAILY_TRANSACTION_FREQUENCY")) {
+                Instant now = Instant.now();
+                ZonedDateTime startOfDayZoned = now.atZone(ZoneOffset.UTC).toLocalDate().atStartOfDay(ZoneOffset.UTC);
+                Instant startOfDay = startOfDayZoned.toInstant();
+                ZonedDateTime endOfDayZoned = startOfDayZoned.plusDays(1).minusNanos(1);
+                Instant endOfDay = endOfDayZoned.toInstant();
 
+                long transactionCount = transactionRepository.countAllByCustomersAndCreatedAtBetween(customer, startOfDay, endOfDay);
+                if (transactionCount + 1 > Long.parseLong(ruleCondition.getValue())) checkCount++;
+            } else if (ruleCondition.getField().equals("DAILY_TRANSACTION_AMOUNT")) {
+                Instant now = Instant.now();
+                ZonedDateTime startOfDayZoned = now.atZone(ZoneOffset.UTC).toLocalDate().atStartOfDay(ZoneOffset.UTC);
+                Instant startOfDay = startOfDayZoned.toInstant();
+                ZonedDateTime endOfDayZoned = startOfDayZoned.plusDays(1).minusNanos(1);
+                Instant endOfDay = endOfDayZoned.toInstant();
+
+                List<Transaction> list = transactionRepository.findAllByCustomersAndCreatedAtBetween(customer, startOfDay, endOfDay);
+                long amount = list.stream().map(Transaction::getAmount).mapToLong(Long::parseLong).sum();
+                if (Long.parseLong(req.getAmount()) + amount > Long.parseLong(ruleCondition.getValue())) checkCount++;
             } else if (ruleCondition.getField().equals("IP_LOCATION")) {
                 if (ruleCondition.getCheckConstraint().equals("NOT_ALLOWED")) {
                     if (req.getIpLocation().equals(ruleCondition.getValue())) checkCount++;
@@ -139,6 +162,10 @@ public class RuleService {
                     if (req.getStatus().equals(ruleCondition.getValue())) checkCount++;
                 }
             } else if (ruleCondition.getField().equals("DEVICE_ID")) {
+                if (ruleCondition.getValue().equals("ACTIVE")) {
+                    String message = restClient.checkStatus(customer.getPhoneNumber(), "123");
+                    if (!message.equals("ACTIVE")) checkCount++;
+                }
             }
         }
         return checkCount;

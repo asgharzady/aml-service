@@ -37,6 +37,7 @@ public class TransactionService {
     @Autowired
     private RuleService ruleService;
 
+
 //    public RecordCustomerTrxResDTO recordTrx(RecordCustomerTrxReqDTO req) {
 //        log.info("transaction received with cid " + req.getCustomerId());
 //        boolean isAllowed = true;
@@ -98,8 +99,8 @@ public class TransactionService {
         TransactionValidatorModel transactionValidatorModel = new TransactionValidatorModel();
         transactionValidatorModel.setAmount(req.getTransactionAmount());
         transactionValidatorModel.setIpLocation(req.getMerchantLocation());
-        transactionValidatorModel.setStatus(customers.isBlocked() ? "BLOCKED": "NOT_BLOCKED");
-        boolean isFlagged = ruleService.checkValidity(transactionValidatorModel, customerTransactions, customers);
+        transactionValidatorModel.setStatus(customers.isBlocked() ? "BLOCKED" : "NOT_BLOCKED");
+        boolean isFlagged = ruleService.checkValidity(transactionValidatorModel, customers);
         Transaction transaction = new Transaction(req, customers, isFlagged, null);
         transactionRepository.save(transaction);
 
