@@ -10,5 +10,6 @@ public class RecordCustomerTrxReqDTO {
     private String transactionDescription;
     private String customerId;
     private String merchantLocation;
+    private String deviceId;
 
 }

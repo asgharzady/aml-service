@@ -163,7 +163,7 @@ public class RuleService {
                 }
             } else if (ruleCondition.getField().equals("DEVICE_ID")) {
                 if (ruleCondition.getValue().equals("ACTIVE")) {
-                    String message = restClient.checkStatus(customer.getPhoneNumber(), "123");
+                    String message = restClient.checkStatus(customer.getPhoneNumber(), req.getDeviceId());
                     if (!message.equals("ACTIVE")) checkCount++;
                 }
             }
