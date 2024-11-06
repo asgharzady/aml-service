@@ -88,6 +88,7 @@ public class AgentService {
         if (agentDTO.getBeneficialOweners() != null)
             agent.setBeneficialOweners(agentDTO.toEntity().getBeneficialOweners());
         if (agentDTO.getControlOweners() != null) agent.setControlOweners(agentDTO.toEntity().getControlOweners());
+        if (agentDTO.getIsBlocked() != null) agent.setIsBlocked(agentDTO.toEntity().getIsBlocked());
         return agentRepository.save(agent);
     }
 

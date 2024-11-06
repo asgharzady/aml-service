@@ -50,6 +50,8 @@ public class PartnerDTO {
     List<PersonDTO> beneficialOweners;
     List<PersonDTO> controlOweners;
 
+    private Boolean isBlocked;
+
     public Partner toEntity() {
         Partner partner = new Partner();
         partner.setId(this.id);
@@ -66,6 +68,7 @@ public class PartnerDTO {
         if (this.postAddress != null) partner.setPostAddress(this.postAddress.toEntity());
         partner.setMainPhoneNo(this.mainPhoneNo);
         partner.setSecPhoneNumber(this.secPhoneNumber);
+        partner.setIsBlocked(this.isBlocked);
         partner.setCompWebsite(this.compWebsite);
         partner.setTradeNameWebsite(this.tradeNameWebsite);
         partner.setIsListedOnSE(this.isListedOnSE);

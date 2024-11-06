@@ -81,6 +81,7 @@ public class PartnerService {
         if (partnerDTO.getAuthsignName() != null) partner.setAuthsignName(partnerDTO.getAuthsignName());
         if (partnerDTO.getAuthsignPosition() != null) partner.setAuthsignPosition(partnerDTO.getAuthsignPosition());
         if (partnerDTO.getFinancingBankName() != null) partner.setFinancingBankName(partnerDTO.getFinancingBankName());
+        if (partnerDTO.getIsBlocked() != null) partner.setIsBlocked(partnerDTO.getIsBlocked());
         if (partnerDTO.getFinancingBankSwiftCode() != null)
             partner.setFinancingBankSwiftCode(partnerDTO.getFinancingBankSwiftCode());
         if (partnerDTO.getFundingAccountName() != null)

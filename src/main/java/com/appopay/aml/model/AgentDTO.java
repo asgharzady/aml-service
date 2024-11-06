@@ -50,6 +50,8 @@ public class AgentDTO {
     List<PersonDTO> beneficialOweners;
     List<PersonDTO> controlOweners;
 
+    private Boolean isBlocked;
+
     public Agent toEntity() {
         Agent agent = new Agent();
         agent.setId(this.id);
@@ -72,6 +74,7 @@ public class AgentDTO {
         agent.setExchangeName(this.ExchangeName);
         agent.setSymbolListed(this.symbolListed);
         agent.setIsRegByFinEntity(this.isRegByFinEntity);
+        agent.setIsBlocked(this.isBlocked);
         agent.setIsRegByFinSerRegulator(this.isRegByFinSerRegulator);
         agent.setFinEntity(this.FinEntity);
         agent.setFinSerRegulatorName(this.FinSerRegulatorName);

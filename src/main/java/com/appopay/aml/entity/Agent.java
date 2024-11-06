@@ -24,6 +24,8 @@ public class Agent {
     private String compRegDate;
     private String compRegProvince;
 
+    private Boolean isBlocked;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "curr_add_id")
     private Address currAddress;

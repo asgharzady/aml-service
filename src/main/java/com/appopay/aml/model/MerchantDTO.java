@@ -48,6 +48,8 @@ public class MerchantDTO {
     Boolean linkedToPEP;
     List<MerchantPEPFamilyDTO> pepFamilyDetails;
 
+    private Boolean isBlocked;
+
     public Merchant toEntity() {
         Merchant merchant = new Merchant();
         merchant.setLegalName(this.getLegalName());
@@ -77,6 +79,7 @@ public class MerchantDTO {
         merchant.setAccountType(this.getAccountType());
         merchant.setBankName(this.getBankName());
         merchant.setAccountNumber(this.getAccountNumber());
+        merchant.setIsBlocked(this.getIsBlocked());
         merchant.setPepStatus(this.getPepStatus());
         merchant.setPepPosition(this.getPepPosition());
         merchant.setPepStartDate(this.getPepStartDate());
