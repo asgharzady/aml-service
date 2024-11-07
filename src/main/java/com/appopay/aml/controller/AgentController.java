@@ -43,5 +43,11 @@ public class AgentController {
         return ResponseEntity.ok().body(agentService.findAll(PageRequest.of(page, size)));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAgent(@PathVariable("id") long id) {
+        agentService.deleteAgent(id);
+        return ResponseEntity.ok().build();
+    }
+
 
 }

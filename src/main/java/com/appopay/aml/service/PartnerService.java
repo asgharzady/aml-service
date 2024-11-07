@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -109,6 +110,15 @@ public class PartnerService {
         response.setData(partnerRepository.findAll(pageable).stream().toList());
         response.setTotalDocuments(partnerRepository.count());
         return response;
+    }
+
+    @Transactional
+    public Boolean deletePartner(long id) {
+        if (partnerRepository.existsById(id)) {
+            partnerRepository.deleteById(id);
+            return true;
+        }
+        throw new CustomException("ID not found");
     }
 
 

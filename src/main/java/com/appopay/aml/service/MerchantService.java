@@ -119,4 +119,12 @@ public class MerchantService {
         }
     }
 
+    public Boolean deleteMerchant(long id) {
+        if (merchantRepository.existsById(id)) {
+            merchantRepository.deleteById(id);
+            return true;
+        }
+        throw new CustomException("ID not found");
+    }
+
 }

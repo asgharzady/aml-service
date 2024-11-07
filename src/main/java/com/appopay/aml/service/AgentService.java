@@ -107,5 +107,13 @@ public class AgentService {
         return response;
     }
 
+    public Boolean deleteAgent(long id) {
+        if (agentRepository.existsById(id)) {
+            agentRepository.deleteById(id);
+            return true;
+        }
+        throw new CustomException("ID not found");
+    }
+
 
 }
