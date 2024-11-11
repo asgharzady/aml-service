@@ -23,8 +23,8 @@ public class S3Service {
     private final String bucketName;
 
 //        public S3Service() {
-//        String bucketName = "appopay-aml-frontend";
-//        AwsBasicCredentials awsCreds = AwsBasicCredentials.create("AKIAUFQFSYCH3QWPAQUV", "SvL4LIJVBjhtRV9ZCTIUmGkP2gJ2JCBBNYcWiDQD");
+//        String bucketName = "appopay-aml-frontend"; // REMOVE SEC TO MAKE SECRET WORK
+//        AwsBasicCredentials awsCreds = AwsBasicCredentials.create("AKIAUFQFSYCH3QWPAQUVSEC", "SvL4LIJVBjhtRV9ZCTIUmGkP2gJ2JCBBNYcWiDQDSEC");
 //        this.s3Client = S3Client.builder()
 //                .region(Region.US_EAST_2)  // Set your desired region
 //                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
