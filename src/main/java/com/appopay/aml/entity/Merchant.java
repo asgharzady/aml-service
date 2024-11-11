@@ -49,8 +49,13 @@ public class Merchant {
     private String pepStartDate;
     private String pepEndDate;
     private Boolean linkedToPEP;
-
     private Boolean isBlocked;
+    private String frontIdURL;
+    private String backIdURL;
+    private String compRegistrationURL;
+    private String licenseURL;
+    private String others1URL;
+    private String others2URL;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "merchant_id")
     private List<MerchantPEPFamily> pepFamilyDetails;

@@ -1,20 +1,28 @@
 package com.appopay.aml.service;
 
 import com.appopay.aml.Exception.CustomException;
-import com.appopay.aml.entity.CountryRiskConfig;
+import com.appopay.aml.entity.*;
 import com.appopay.aml.entity.Merchant;
 import com.appopay.aml.model.MerchantDTO;
 import com.appopay.aml.model.PaginatedMerchant;
+import com.appopay.aml.model.UploadDocumentDTO;
 import com.appopay.aml.repository.CountryRiskConfigRepository;
 import com.appopay.aml.repository.MerchantRepository;
 import com.appopay.aml.util.RiskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+
+import static com.appopay.aml.service.CustomerService.getFileHashName;
 
 @Service
 public class MerchantService {
@@ -24,6 +32,10 @@ public class MerchantService {
     private MerchantRepository merchantRepository;
     @Autowired
     private CountryRiskConfigRepository countryRiskConfigRepository;
+    @Autowired
+    private S3Service s3Service;
+    @Value("${s3Url}")
+    private String baseUrl;
 
     public Merchant createMerchant(MerchantDTO merchantDTO) {
         if (merchantDTO.getId() != null) {
@@ -93,7 +105,6 @@ public class MerchantService {
         return merchantRepository.save(merchant);
     }
 
-
     public Merchant getById(Long id) {
         Optional<Merchant> merchant = merchantRepository.findById(id);
         if (merchant.isPresent()) {
@@ -125,6 +136,55 @@ public class MerchantService {
             return true;
         }
         throw new CustomException("ID not found");
+    }
+
+    public List<String> uploadDocuments(UploadDocumentDTO request) {
+        Optional<Merchant> optionalMerchant = merchantRepository.findById(request.getId());
+        if (optionalMerchant.isEmpty()) throw new CustomException("merchant not found");
+
+        Merchant merchant = optionalMerchant.get();
+        List<String> response = new ArrayList<>();
+
+        List<MultipartFile> files = new ArrayList<>(List.of(request.getFrontId(), request.getBackId(), request.getCompRegistration(), request.getLicense()));
+        List<String> urlNames = new ArrayList<>(Arrays.asList("frontIdUrl", "backIdUrl", "compRegistrationURL", "licenseURL"));
+        if (request.getOthers1() != null) {
+            files.add(request.getOthers1());
+            urlNames.add("others1URL");
+        }
+        if (request.getOthers2() != null) {
+            files.add(request.getOthers2());
+            urlNames.add("others2URL");
+        }
+
+        for (int i = 0; i < files.size(); i++) {
+            String keyName = getFileHashName(files.get(i));
+            s3Service.uploadFile(files.get(i), keyName);
+            String url = baseUrl + "mer" + keyName;
+
+            switch (urlNames.get(i)) {
+                case "frontIdUrl":
+                    merchant.setFrontIdURL(url);
+                    break;
+                case "backIdUrl":
+                    merchant.setBackIdURL(url);
+                    break;
+                case "compRegistrationUrl":
+                    merchant.setCompRegistrationURL(url);
+                    break;
+                case "licenseUrl":
+                    merchant.setLicenseURL(url);
+                case "others1URL":
+                    merchant.setOthers1URL(url);
+                case "others2URL":
+                    merchant.setOthers2URL(url);
+                    break;
+
+            }
+            response.add(urlNames.get(i) + ": " + url);
+        }
+        merchantRepository.save(merchant);
+
+        return response;
     }
 
 }

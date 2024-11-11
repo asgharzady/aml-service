@@ -244,7 +244,7 @@ public class CustomerService {
         }
     }
 
-    public String getFileHashName(MultipartFile file) {
+     public static String getFileHashName(MultipartFile file) {
         try {
 
             String hash = DigestUtils.md5DigestAsHex(file.getBytes());

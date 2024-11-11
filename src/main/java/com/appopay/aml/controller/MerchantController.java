@@ -4,13 +4,18 @@ package com.appopay.aml.controller;
 import com.appopay.aml.entity.Merchant;
 import com.appopay.aml.model.MerchantDTO;
 import com.appopay.aml.model.PaginatedMerchant;
+import com.appopay.aml.model.UploadDocumentDTO;
+import com.appopay.aml.model.UploadIdDTO;
 import com.appopay.aml.service.MerchantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("merchant")
@@ -41,6 +46,12 @@ public class MerchantController {
     @PostMapping(value = "/findAll/{page}/{size}")
     public ResponseEntity<PaginatedMerchant> getAllMerchants(@PathVariable("page") Integer page, @PathVariable("size") Integer size) {
         return ResponseEntity.ok().body(merchantService.findAll(PageRequest.of(page, size)));
+    }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<String>> uploadFile(@ModelAttribute() UploadDocumentDTO uploadDocumentDTO) {
+        log.info("uploading file  with customer id: "+ uploadDocumentDTO.getId());
+        return ResponseEntity.ok(merchantService.uploadDocuments(uploadDocumentDTO));
     }
 
     @DeleteMapping("/{id}")
