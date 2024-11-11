@@ -60,10 +60,10 @@ public class Agent {
     private String currencies;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "agent_id")
+    @JoinColumn(name = "agent_beneficial_id") // Unique join column
     private List<Person> beneficialOweners;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "agent_id")
+    @JoinColumn(name = "agent_control_id") // Unique join column
     private List<Person> controlOweners;
 }

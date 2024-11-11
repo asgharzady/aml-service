@@ -60,10 +60,10 @@ public class Partner {
     private String currencies;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "partner_id")
+    @JoinColumn(name = "partner_beneficial_id")
     private List<Person> beneficialOweners;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "partner_id")
+    @JoinColumn(name = "partner_control_id")
     private List<Person> controlOweners;
 }
