@@ -43,5 +43,11 @@ public class MerchantController {
         return ResponseEntity.ok().body(merchantService.findAll(PageRequest.of(page, size)));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMerchant(@PathVariable("id") long id) {
+        merchantService.deleteMerchant(id);
+        return ResponseEntity.ok().build();
+    }
+
 
 }

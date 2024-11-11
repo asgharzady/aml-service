@@ -7,9 +7,11 @@ public class RecordCustomerTrxResDTO {
 
     private String riskScore;
     private boolean transactionAllowed;
+    private boolean isFlagged;
 
-    public RecordCustomerTrxResDTO(String riskScore, boolean transactionAllowed) {
+    public RecordCustomerTrxResDTO(String riskScore, boolean isFlagged) {
         this.riskScore = riskScore;
-        this.transactionAllowed = transactionAllowed;
+        this.transactionAllowed = true;
+        this.isFlagged= isFlagged;
     }
 }

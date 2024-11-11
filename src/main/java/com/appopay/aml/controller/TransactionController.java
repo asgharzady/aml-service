@@ -23,6 +23,11 @@ public class TransactionController {
         return ResponseEntity.ok().body(transactionService.getAll(PageRequest.of(page,size)));
     }
 
+    @GetMapping("flagged/{page}/{size}")
+    public ResponseEntity<PaginatedTransactions> getAllFlagged(@PathVariable("page") Integer page, @PathVariable("size") Integer size){
+        return ResponseEntity.ok().body(transactionService.getAllFlagged(PageRequest.of(page,size)));
+    }
+
     @PutMapping
     public ResponseEntity<Transaction> updateOne(@RequestBody TransactionDTO req) {
         return ResponseEntity.ok().body(transactionService.updateOne(req));

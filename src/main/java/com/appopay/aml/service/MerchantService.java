@@ -69,6 +69,7 @@ public class MerchantService {
         if (merchantDTO.getContactTelephone() != null) merchant.setContactTelephone(merchantDTO.getContactTelephone());
         if (merchantDTO.getContactEmail() != null) merchant.setContactEmail(merchantDTO.getContactEmail());
         if (merchantDTO.getMonthlySales() != null) merchant.setMonthlySales(merchantDTO.getMonthlySales());
+        if (merchantDTO.getIsBlocked() != null) merchant.setIsBlocked(merchantDTO.getIsBlocked());
         if (merchantDTO.getTransactionTypech() != null)
             merchant.setTransactionTypech(String.join(",", merchantDTO.getTransactionTypech()));
         if (merchantDTO.getAverageTicket() != null) merchant.setAverageTicket(merchantDTO.getAverageTicket());
@@ -116,6 +117,14 @@ public class MerchantService {
         else {
             return risk.toString();
         }
+    }
+
+    public Boolean deleteMerchant(long id) {
+        if (merchantRepository.existsById(id)) {
+            merchantRepository.deleteById(id);
+            return true;
+        }
+        throw new CustomException("ID not found");
     }
 
 }

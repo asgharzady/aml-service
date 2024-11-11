@@ -9,6 +9,6 @@ public class TransactionValidatorModel {
     String frequency;
     String ipLocation;
     String status;
-    String deviceIdStatus;
+    String deviceId;
 
 }

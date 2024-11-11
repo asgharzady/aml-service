@@ -100,7 +100,7 @@ public class TransactionService {
         transactionValidatorModel.setAmount(req.getTransactionAmount());
         transactionValidatorModel.setIpLocation(req.getMerchantLocation());
         transactionValidatorModel.setStatus(customers.isBlocked() ? "BLOCKED" : "NOT_BLOCKED");
-        boolean isFlagged = ruleService.checkValidity(transactionValidatorModel, customers);
+        boolean isFlagged = !ruleService.checkValidity(transactionValidatorModel, customers);
         Transaction transaction = new Transaction(req, customers, isFlagged, null);
         transactionRepository.save(transaction);
 
@@ -110,6 +110,13 @@ public class TransactionService {
     public PaginatedTransactions getAll(Pageable pageable) {
         PaginatedTransactions response = new PaginatedTransactions();
         response.setData(transactionRepository.findAll(pageable).stream().collect(Collectors.toList()));
+        response.setDocuments(transactionRepository.count());
+        return response;
+    }
+
+    public PaginatedTransactions getAllFlagged(Pageable pageable) {
+        PaginatedTransactions response = new PaginatedTransactions();
+        response.setData(transactionRepository.findAll(pageable).stream().filter(Transaction::isFlagged).collect(Collectors.toList()));
         response.setDocuments(transactionRepository.count());
         return response;
     }

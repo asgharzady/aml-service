@@ -49,6 +49,8 @@ public class Merchant {
     private String pepStartDate;
     private String pepEndDate;
     private Boolean linkedToPEP;
+
+    private Boolean isBlocked;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "merchant_id")
     private List<MerchantPEPFamily> pepFamilyDetails;

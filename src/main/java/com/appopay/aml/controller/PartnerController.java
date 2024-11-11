@@ -40,4 +40,10 @@ public class PartnerController {
     public ResponseEntity<PaginatedPartner> getAllPartners(@PathVariable("page") Integer page,@PathVariable("size") Integer size) {
         return ResponseEntity.ok().body(partnerService.findAll(PageRequest.of(page,size)));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePartner(@PathVariable("id") long id) {
+        partnerService.deletePartner(id);
+        return ResponseEntity.ok().build();
+    }
 }

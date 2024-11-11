@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -81,6 +82,7 @@ public class PartnerService {
         if (partnerDTO.getAuthsignName() != null) partner.setAuthsignName(partnerDTO.getAuthsignName());
         if (partnerDTO.getAuthsignPosition() != null) partner.setAuthsignPosition(partnerDTO.getAuthsignPosition());
         if (partnerDTO.getFinancingBankName() != null) partner.setFinancingBankName(partnerDTO.getFinancingBankName());
+        if (partnerDTO.getIsBlocked() != null) partner.setIsBlocked(partnerDTO.getIsBlocked());
         if (partnerDTO.getFinancingBankSwiftCode() != null)
             partner.setFinancingBankSwiftCode(partnerDTO.getFinancingBankSwiftCode());
         if (partnerDTO.getFundingAccountName() != null)
@@ -108,6 +110,15 @@ public class PartnerService {
         response.setData(partnerRepository.findAll(pageable).stream().toList());
         response.setTotalDocuments(partnerRepository.count());
         return response;
+    }
+
+    @Transactional
+    public Boolean deletePartner(long id) {
+        if (partnerRepository.existsById(id)) {
+            partnerRepository.deleteById(id);
+            return true;
+        }
+        throw new CustomException("ID not found");
     }
 
 
