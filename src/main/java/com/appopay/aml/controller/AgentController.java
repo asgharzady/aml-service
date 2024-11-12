@@ -4,13 +4,17 @@ package com.appopay.aml.controller;
 import com.appopay.aml.entity.Agent;
 import com.appopay.aml.model.AgentDTO;
 import com.appopay.aml.model.PaginatedAgent;
+import com.appopay.aml.model.UploadDocumentDTO;
 import com.appopay.aml.service.AgentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("agent")
@@ -22,19 +26,19 @@ public class AgentController {
 
     @PostMapping(value = "/")
     public ResponseEntity<Agent> createAgent(@RequestBody AgentDTO request) {
-        log.info("creating agent with name: "+ request.getCompRegName());
+        log.info("creating agent with name: " + request.getCompRegName());
         return ResponseEntity.ok().body(agentService.createAgent(request));
     }
 
     @PutMapping(value = "/")
     public ResponseEntity<Agent> updateOne(@RequestBody AgentDTO request) {
-        log.info("updating agent with id: "+ request.getId());
+        log.info("updating agent with id: " + request.getId());
         return ResponseEntity.ok().body(agentService.updateOne(request));
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<Agent> getById(@PathVariable("id") Long id) {
-        log.info("retreiving agent with id: "+ id);
+        log.info("retreiving agent with id: " + id);
         return ResponseEntity.ok().body(agentService.getById(id));
     }
 
@@ -47,6 +51,18 @@ public class AgentController {
     public ResponseEntity<Void> deleteAgent(@PathVariable("id") long id) {
         agentService.deleteAgent(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<String>> uploadFile(@ModelAttribute() UploadDocumentDTO uploadDocumentDTO) {
+        log.info("uploading file  with agent id: " + uploadDocumentDTO.getId());
+        return ResponseEntity.ok(agentService.uploadDocuments(uploadDocumentDTO));
+    }
+
+    @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<String>> updateFile(@ModelAttribute() UploadDocumentDTO uploadDocumentDTO) {
+        log.info("uploading file  with merchant id: " + uploadDocumentDTO.getId());
+        return ResponseEntity.ok(agentService.updateDocuments(uploadDocumentDTO));
     }
 
 

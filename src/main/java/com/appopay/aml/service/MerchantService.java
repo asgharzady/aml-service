@@ -141,24 +141,26 @@ public class MerchantService {
     public List<String> uploadDocuments(UploadDocumentDTO request) {
         Optional<Merchant> optionalMerchant = merchantRepository.findById(request.getId());
         if (optionalMerchant.isEmpty()) throw new CustomException("merchant not found");
+        if (request.getFrontId() == null || request.getBackId() == null || request.getCompRegistration() == null || request.getLicense() == null)
+            throw new CustomException("required document is null");
 
         Merchant merchant = optionalMerchant.get();
         List<String> response = new ArrayList<>();
 
         List<MultipartFile> files = new ArrayList<>(List.of(request.getFrontId(), request.getBackId(), request.getCompRegistration(), request.getLicense()));
-        List<String> urlNames = new ArrayList<>(Arrays.asList("frontIdUrl", "backIdUrl", "compRegistrationURL", "licenseURL"));
+        List<String> urlNames = new ArrayList<>(Arrays.asList("frontIdUrl", "backIdUrl", "compRegistrationUrl", "licenseUrl"));
         if (request.getOthers1() != null) {
             files.add(request.getOthers1());
-            urlNames.add("others1URL");
+            urlNames.add("others1Url");
         }
         if (request.getOthers2() != null) {
             files.add(request.getOthers2());
-            urlNames.add("others2URL");
+            urlNames.add("others2Url");
         }
 
         for (int i = 0; i < files.size(); i++) {
             String keyName = getFileHashName(files.get(i));
-            s3Service.uploadFile(files.get(i), keyName);
+            s3Service.uploadFile(files.get(i), "mer" + keyName);
             String url = baseUrl + "mer" + keyName;
 
             switch (urlNames.get(i)) {
@@ -173,9 +175,9 @@ public class MerchantService {
                     break;
                 case "licenseUrl":
                     merchant.setLicenseURL(url);
-                case "others1URL":
+                case "others1Url":
                     merchant.setOthers1URL(url);
-                case "others2URL":
+                case "others2Url":
                     merchant.setOthers2URL(url);
                     break;
 
@@ -186,5 +188,77 @@ public class MerchantService {
 
         return response;
     }
+
+    public List<String> updateDocuments(UploadDocumentDTO request) {
+        Optional<Merchant> optionalMerchant = merchantRepository.findById(request.getId());
+        if (optionalMerchant.isEmpty()) throw new CustomException("merchant not found");
+
+
+        Merchant merchant = optionalMerchant.get();
+        List<String> response = new ArrayList<>();
+
+        List<MultipartFile> files = new ArrayList<>();
+        List<String> urlNames = new ArrayList<>();
+        if (request.getFrontId() != null) {
+            files.add(request.getFrontId());
+            urlNames.add("frontIdUrl");
+        }
+        if (request.getBackId() != null) {
+            files.add(request.getBackId());
+            urlNames.add("backIdUrl");
+        }
+        if (request.getCompRegistration() != null) {
+            files.add(request.getCompRegistration());
+            urlNames.add("compRegistrationUrl");
+        }
+        if (request.getLicense() != null) {
+            files.add(request.getLicense());
+            urlNames.add("licenseUrl");
+        }
+        if (request.getOthers1() != null) {
+            files.add(request.getOthers1());
+            urlNames.add("others1Url");
+        }
+        if (request.getOthers2() != null) {
+            files.add(request.getOthers2());
+            urlNames.add("others2Url");
+        }
+
+        for (int i = 0; i < files.size(); i++) {
+            String keyName = getFileHashName(files.get(i));
+            s3Service.uploadFile(files.get(i), "mer" + keyName);
+            String url = baseUrl + "mer" + keyName;
+
+            switch (urlNames.get(i)) {
+                case "frontIdUrl":
+                    merchant.setFrontIdURL(url);
+                    break;
+                case "backIdUrl":
+                    merchant.setBackIdURL(url);
+                    break;
+                case "compRegistrationUrl":
+                    merchant.setCompRegistrationURL(url);
+                    break;
+                case "licenseUrl":
+                    merchant.setLicenseURL(url);
+                case "others1Url":
+                    merchant.setOthers1URL(url);
+                case "others2Url":
+                    merchant.setOthers2URL(url);
+                    break;
+
+            }
+            response.add(urlNames.get(i) + ": " + url);
+        }
+        merchantRepository.save(merchant);
+
+        return response;
+
+    }
+
+    public void deleteFile(String keyName) {
+        s3Service.deleteFile(keyName);
+    }
+
 
 }

@@ -27,19 +27,19 @@ public class MerchantController {
 
     @PostMapping(value = "/")
     public ResponseEntity<Merchant> createMerchant(@RequestBody MerchantDTO request) {
-        log.info("creating merchant with name: "+ request.getAccountName());
+        log.info("creating merchant with name: " + request.getAccountName());
         return ResponseEntity.ok().body(merchantService.createMerchant(request));
     }
 
     @PutMapping(value = "/")
     public ResponseEntity<Merchant> updateOne(@RequestBody MerchantDTO request) {
-        log.info("updating merchant with name: "+ request.getAccountName());
+        log.info("updating merchant with name: " + request.getAccountName());
         return ResponseEntity.ok().body(merchantService.updateOne(request));
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<Merchant> updateOne(@PathVariable("id") Long id) {
-        log.info("retrieving merchant with id: "+ id);
+        log.info("retrieving merchant with id: " + id);
         return ResponseEntity.ok().body(merchantService.getById(id));
     }
 
@@ -50,8 +50,20 @@ public class MerchantController {
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<List<String>> uploadFile(@ModelAttribute() UploadDocumentDTO uploadDocumentDTO) {
-        log.info("uploading file  with customer id: "+ uploadDocumentDTO.getId());
+        log.info("uploading file  with merchant id: " + uploadDocumentDTO.getId());
         return ResponseEntity.ok(merchantService.uploadDocuments(uploadDocumentDTO));
+    }
+
+    @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<String>> updateFile(@ModelAttribute() UploadDocumentDTO uploadDocumentDTO) {
+        log.info("uploading file  with merchant id: " + uploadDocumentDTO.getId());
+        return ResponseEntity.ok(merchantService.updateDocuments(uploadDocumentDTO));
+    }
+
+    @PostMapping("/deleteFile/{fileName}")
+    public ResponseEntity<Void> deleteFile(@PathVariable String fileName){
+        merchantService.deleteFile(fileName);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

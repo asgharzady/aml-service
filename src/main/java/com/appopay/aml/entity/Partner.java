@@ -61,6 +61,13 @@ public class Partner {
     private String fundingAccHolderRelation;
     private String currencies;
 
+    private String frontIdURL;
+    private String backIdURL;
+    private String compRegistrationURL;
+    private String licenseURL;
+    private String others1URL;
+    private String others2URL;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "partner_beneficial_id")
     private List<Person> beneficialOweners;

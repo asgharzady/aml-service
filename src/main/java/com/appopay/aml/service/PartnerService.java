@@ -1,19 +1,29 @@
 package com.appopay.aml.service;
 
 import com.appopay.aml.Exception.CustomException;
+import com.appopay.aml.entity.Merchant;
+import com.appopay.aml.entity.Partner;
 import com.appopay.aml.entity.Partner;
 import com.appopay.aml.model.PaginatedPartner;
 import com.appopay.aml.model.PartnerDTO;
+import com.appopay.aml.model.UploadDocumentDTO;
 import com.appopay.aml.repository.PartnerRepository;
 import com.appopay.aml.util.RiskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+
+import static com.appopay.aml.service.CustomerService.getFileHashName;
 
 @Service
 public class PartnerService {
@@ -23,6 +33,12 @@ public class PartnerService {
     private PartnerRepository partnerRepository;
     @Autowired
     private MerchantService merchantService;
+
+    @Autowired
+    private S3Service s3Service;
+
+    @Value("${s3Url}")
+    private String baseUrl;
 
     public Partner createPartner(PartnerDTO partnerDTO) {
         if (partnerDTO.getId() != null) {
@@ -121,5 +137,120 @@ public class PartnerService {
         throw new CustomException("ID not found");
     }
 
+    public List<String> uploadDocuments(UploadDocumentDTO request) {
+        Optional<Partner> optionalPartner = partnerRepository.findById(request.getId());
+        if (optionalPartner.isEmpty()) throw new CustomException("partner not found");
+
+        Partner partner = optionalPartner.get();
+        List<String> response = new ArrayList<>();
+
+        List<MultipartFile> files = new ArrayList<>(List.of(request.getFrontId(), request.getBackId(), request.getCompRegistration(), request.getLicense()));
+        List<String> urlNames = new ArrayList<>(Arrays.asList("frontIdUrl", "backIdUrl", "compRegistrationURL", "licenseURL"));
+        if (request.getOthers1() != null) {
+            files.add(request.getOthers1());
+            urlNames.add("others1URL");
+        }
+        if (request.getOthers2() != null) {
+            files.add(request.getOthers2());
+            urlNames.add("others2URL");
+        }
+
+        for (int i = 0; i < files.size(); i++) {
+            String keyName = getFileHashName(files.get(i));
+            s3Service.uploadFile(files.get(i), "par"+keyName);
+            String url = baseUrl + "par" + keyName;
+
+            switch (urlNames.get(i)) {
+                case "frontIdUrl":
+                    partner.setFrontIdURL(url);
+                    break;
+                case "backIdUrl":
+                    partner.setBackIdURL(url);
+                    break;
+                case "compRegistrationUrl":
+                    partner.setCompRegistrationURL(url);
+                    break;
+                case "licenseUrl":
+                    partner.setLicenseURL(url);
+                case "others1URL":
+                    partner.setOthers1URL(url);
+                case "others2URL":
+                    partner.setOthers2URL(url);
+                    break;
+
+            }
+            response.add(urlNames.get(i) + ": " + url);
+        }
+        partnerRepository.save(partner);
+
+        return response;
+    }
+
+    public List<String> updateDocuments(UploadDocumentDTO request) {
+        Optional<Partner> optionalPartner = partnerRepository.findById(request.getId());
+        if (optionalPartner.isEmpty()) throw new CustomException("partner not found");
+
+
+        Partner partner = optionalPartner.get();
+        List<String> response = new ArrayList<>();
+
+        List<MultipartFile> files = new ArrayList<>();
+        List<String> urlNames = new ArrayList<>();
+        if (request.getFrontId() != null) {
+            files.add(request.getFrontId());
+            urlNames.add("frontIdUrl");
+        }
+        if (request.getBackId() != null) {
+            files.add(request.getBackId());
+            urlNames.add("backIdUrl");
+        }
+        if (request.getCompRegistration() != null) {
+            files.add(request.getCompRegistration());
+            urlNames.add("compRegistrationUrl");
+        }
+        if (request.getLicense() != null) {
+            files.add(request.getLicense());
+            urlNames.add("licenseUrl");
+        }
+        if (request.getOthers1() != null) {
+            files.add(request.getOthers1());
+            urlNames.add("others1Url");
+        }
+        if (request.getOthers2() != null) {
+            files.add(request.getOthers2());
+            urlNames.add("others2Url");
+        }
+
+        for (int i = 0; i < files.size(); i++) {
+            String keyName = getFileHashName(files.get(i));
+            s3Service.uploadFile(files.get(i), "par" + keyName);
+            String url = baseUrl + "par" + keyName;
+
+            switch (urlNames.get(i)) {
+                case "frontIdUrl":
+                    partner.setFrontIdURL(url);
+                    break;
+                case "backIdUrl":
+                    partner.setBackIdURL(url);
+                    break;
+                case "compRegistrationUrl":
+                    partner.setCompRegistrationURL(url);
+                    break;
+                case "licenseUrl":
+                    partner.setLicenseURL(url);
+                case "others1Url":
+                    partner.setOthers1URL(url);
+                case "others2Url":
+                    partner.setOthers2URL(url);
+                    break;
+
+            }
+            response.add(urlNames.get(i) + ": " + url);
+        }
+        partnerRepository.save(partner);
+
+        return response;
+
+    }
 
 }
