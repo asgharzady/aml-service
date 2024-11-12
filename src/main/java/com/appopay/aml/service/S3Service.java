@@ -23,23 +23,23 @@ public class S3Service {
     private final S3Client s3Client;
     private final String bucketName;
 
-        public S3Service() {
-        String bucketName = "appopay-aml-frontend";
-        AwsBasicCredentials awsCreds = AwsBasicCredentials.create("AKIAUFQFSYCH3QWPAQUV", "SvL4LIJVBjhtRV9ZCTIUmGkP2gJ2JCBBNYcWiDQD");
-        this.s3Client = S3Client.builder()
-                .region(Region.US_EAST_2)  // Set your desired region
-                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-                .build();
-        this.bucketName = bucketName;
-    }
-//    public S3Service() {
+//        public S3Service() {
 //        String bucketName = "appopay-aml-frontend";
+//        AwsBasicCredentials awsCreds = AwsBasicCredentials.create("AKIAUFQFSYCH3QWPAQUV", "SvL4LIJVBjhtRV9ZCTIUmGkP2gJ2JCBBNYcWiDQD");
 //        this.s3Client = S3Client.builder()
 //                .region(Region.US_EAST_2)  // Set your desired region
-//                // No explicit credentials provider, the SDK will automatically retrieve credentials from the environment or instance profile
+//                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
 //                .build();
 //        this.bucketName = bucketName;
 //    }
+    public S3Service() {
+        String bucketName = "appopay-aml-frontend";
+        this.s3Client = S3Client.builder()
+                .region(Region.US_EAST_2)  // Set your desired region
+                // No explicit credentials provider, the SDK will automatically retrieve credentials from the environment or instance profile
+                .build();
+        this.bucketName = bucketName;
+    }
 
     public String uploadFile(MultipartFile multipartFile, String keyName) {
         try {
