@@ -3,8 +3,10 @@ package com.appopay.aml.service;
 import com.appopay.aml.Exception.CustomException;
 import com.appopay.aml.entity.Agent;
 import com.appopay.aml.entity.Agent;
+import com.appopay.aml.entity.Merchant;
 import com.appopay.aml.entity.Partner;
 import com.appopay.aml.model.AgentDTO;
+import com.appopay.aml.model.DeleteOption;
 import com.appopay.aml.model.PaginatedAgent;
 import com.appopay.aml.model.UploadDocumentDTO;
 import com.appopay.aml.repository.AgentRepository;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -246,6 +249,24 @@ public class AgentService {
 
         return response;
 
+    }
+
+    public void clearField(DeleteOption deleteOption, long id) {
+        Optional<Agent> optionalAgent = agentRepository.findById(id);
+        if (optionalAgent.isEmpty()) {
+            throw new CustomException("agent not found");
+        }
+        try {
+            Agent agent = optionalAgent.get();
+            Field field = Agent.class.getDeclaredField(deleteOption.name());
+            field.setAccessible(true);
+            field.set(agent, null);
+
+            // Save the updated entity
+            agentRepository.save(agent);
+        } catch (Exception e) {
+            throw new CustomException(e.toString());
+        }
     }
 
 

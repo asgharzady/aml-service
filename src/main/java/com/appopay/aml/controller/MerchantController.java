@@ -2,10 +2,7 @@ package com.appopay.aml.controller;
 
 
 import com.appopay.aml.entity.Merchant;
-import com.appopay.aml.model.MerchantDTO;
-import com.appopay.aml.model.PaginatedMerchant;
-import com.appopay.aml.model.UploadDocumentDTO;
-import com.appopay.aml.model.UploadIdDTO;
+import com.appopay.aml.model.*;
 import com.appopay.aml.service.MerchantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,9 +57,15 @@ public class MerchantController {
         return ResponseEntity.ok(merchantService.updateDocuments(uploadDocumentDTO));
     }
 
-    @PostMapping("/deleteFile/{fileName}")
-    public ResponseEntity<Void> deleteFile(@PathVariable String fileName){
+    @DeleteMapping("/deleteFile/{fileName}")
+    public ResponseEntity<Void> deleteFile(@PathVariable String fileName) {
         merchantService.deleteFile(fileName);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/clearField/{id}")
+    public ResponseEntity<Void> clearField(@PathVariable Long id, @RequestParam DeleteOption fieldOption) {
+        merchantService.clearField(fieldOption,id);
         return ResponseEntity.ok().build();
     }
 

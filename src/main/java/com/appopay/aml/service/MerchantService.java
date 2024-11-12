@@ -3,6 +3,7 @@ package com.appopay.aml.service;
 import com.appopay.aml.Exception.CustomException;
 import com.appopay.aml.entity.*;
 import com.appopay.aml.entity.Merchant;
+import com.appopay.aml.model.DeleteOption;
 import com.appopay.aml.model.MerchantDTO;
 import com.appopay.aml.model.PaginatedMerchant;
 import com.appopay.aml.model.UploadDocumentDTO;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -258,6 +260,24 @@ public class MerchantService {
 
     public void deleteFile(String keyName) {
         s3Service.deleteFile(keyName);
+    }
+
+    public void clearField(DeleteOption deleteOption, long id) {
+        Optional<Merchant> optionalMerchant = merchantRepository.findById(id);
+        if (optionalMerchant.isEmpty()) {
+            throw new CustomException("merchant not found");
+        }
+        try {
+            Merchant merchant = optionalMerchant.get();
+            Field field = Merchant.class.getDeclaredField(deleteOption.name());
+            field.setAccessible(true);
+            field.set(merchant, null);
+
+            // Save the updated entity
+            merchantRepository.save(merchant);
+        } catch (Exception e) {
+            throw new CustomException(e.toString());
+        }
     }
 
 

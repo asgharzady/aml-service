@@ -4,6 +4,7 @@ import com.appopay.aml.Exception.CustomException;
 import com.appopay.aml.entity.Merchant;
 import com.appopay.aml.entity.Partner;
 import com.appopay.aml.entity.Partner;
+import com.appopay.aml.model.DeleteOption;
 import com.appopay.aml.model.PaginatedPartner;
 import com.appopay.aml.model.PartnerDTO;
 import com.appopay.aml.model.UploadDocumentDTO;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -251,6 +253,24 @@ public class PartnerService {
 
         return response;
 
+    }
+
+    public void clearField(DeleteOption deleteOption, long id) {
+        Optional<Partner> optionalPartner = partnerRepository.findById(id);
+        if (optionalPartner.isEmpty()) {
+            throw new CustomException("partner not found");
+        }
+        try {
+            Partner partner = optionalPartner.get();
+            Field field = Partner.class.getDeclaredField(deleteOption.name());
+            field.setAccessible(true);
+            field.set(partner, null);
+
+            // Save the updated entity
+            partnerRepository.save(partner);
+        } catch (Exception e) {
+            throw new CustomException(e.toString());
+        }
     }
 
 }

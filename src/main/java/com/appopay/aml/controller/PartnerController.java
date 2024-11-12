@@ -64,4 +64,10 @@ public class PartnerController {
         return ResponseEntity.ok(partnerService.updateDocuments(uploadDocumentDTO));
     }
 
+    @PutMapping("/clearField/{id}")
+    public ResponseEntity<Void> clearField(@PathVariable Long id, @RequestParam DeleteOption fieldOption) {
+        partnerService.clearField(fieldOption,id);
+        return ResponseEntity.ok().build();
+    }
+
 }

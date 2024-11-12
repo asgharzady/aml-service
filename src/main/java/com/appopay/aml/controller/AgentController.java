@@ -3,6 +3,7 @@ package com.appopay.aml.controller;
 
 import com.appopay.aml.entity.Agent;
 import com.appopay.aml.model.AgentDTO;
+import com.appopay.aml.model.DeleteOption;
 import com.appopay.aml.model.PaginatedAgent;
 import com.appopay.aml.model.UploadDocumentDTO;
 import com.appopay.aml.service.AgentService;
@@ -63,6 +64,12 @@ public class AgentController {
     public ResponseEntity<List<String>> updateFile(@ModelAttribute() UploadDocumentDTO uploadDocumentDTO) {
         log.info("uploading file  with merchant id: " + uploadDocumentDTO.getId());
         return ResponseEntity.ok(agentService.updateDocuments(uploadDocumentDTO));
+    }
+
+    @PutMapping("/clearField/{id}")
+    public ResponseEntity<Void> clearField(@PathVariable Long id, @RequestParam DeleteOption fieldOption) {
+        agentService.clearField(fieldOption,id);
+        return ResponseEntity.ok().build();
     }
 
 
