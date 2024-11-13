@@ -23,9 +23,11 @@ public class S3Service {
     private final S3Client s3Client;
     private final String bucketName;
 
-//        public S3Service() {
+
+    //    public S3Service(@Value("${accessKeyId}") String accessKeyId,
+//                     @Value("${secretAccessKey}") String secretAccessKey) {
 //        String bucketName = "appopay-aml-frontend";
-//        AwsBasicCredentials awsCreds = AwsBasicCredentials.create("AKIAUFQFSYCH3QWPAQUV", "SvL4LIJVBjhtRV9ZCTIUmGkP2gJ2JCBBNYcWiDQD");
+//        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKeyId, secretAccessKey);
 //        this.s3Client = S3Client.builder()
 //                .region(Region.US_EAST_2)  // Set your desired region
 //                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
@@ -34,8 +36,7 @@ public class S3Service {
 //    }
     public S3Service() {
         String bucketName = "appopay-aml-frontend";
-        this.s3Client = S3Client.builder()
-                .region(Region.US_EAST_2)  // Set your desired region
+        this.s3Client = S3Client.builder().region(Region.US_EAST_2)  // Set your desired region
                 // No explicit credentials provider, the SDK will automatically retrieve credentials from the environment or instance profile
                 .build();
         this.bucketName = bucketName;
@@ -47,10 +48,7 @@ public class S3Service {
             Path tempFile = Files.createTempFile(keyName, multipartFile.getOriginalFilename());
             multipartFile.transferTo(tempFile.toFile());
 
-            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(keyName)
-                    .build();
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder().bucket(bucketName).key(keyName).build();
 
             PutObjectResponse response = s3Client.putObject(putObjectRequest, RequestBody.fromFile(tempFile));
             // Clean up the temp file
@@ -66,10 +64,7 @@ public class S3Service {
     public void deleteFile(String keyName) {
         try {
             // Create a DeleteObjectRequest
-            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(keyName)
-                    .build();
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(keyName).build();
 
             // Execute the delete operation
             s3Client.deleteObject(deleteObjectRequest);
