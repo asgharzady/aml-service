@@ -2,9 +2,8 @@ package com.appopay.aml.controller;
 
 
 import com.appopay.aml.entity.Transaction;
-import com.appopay.aml.model.CustomersDTO;
 import com.appopay.aml.model.PaginatedTransactions;
-import com.appopay.aml.model.TransactionDTO;
+import com.appopay.aml.model.transaction.TransactionDTO;
 import com.appopay.aml.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;

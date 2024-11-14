@@ -75,5 +75,11 @@ public class MerchantController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping(value = "/vip")
+    public ResponseEntity<Merchant> updateFile(@RequestBody MPADetailsDTO mpaDetailsDTO) {
+        log.info("uptating vip merchant with id: " + mpaDetailsDTO.getMerchantId());
+        return ResponseEntity.ok(merchantService.updateToVIP(mpaDetailsDTO));
+    }
+
 
 }

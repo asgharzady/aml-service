@@ -2,7 +2,6 @@ package com.appopay.aml.controller.rule;
 
 
 import com.appopay.aml.entity.ruleConfig.Rule;
-import com.appopay.aml.model.TransactionDTO;
 import com.appopay.aml.model.rule.PaginatedRule;
 import com.appopay.aml.model.rule.RuleDTO;
 import com.appopay.aml.service.rule.RuleService;

@@ -4,7 +4,7 @@ import com.appopay.aml.Exception.CustomException;
 import com.appopay.aml.entity.Customers;
 import com.appopay.aml.entity.Transaction;
 import com.appopay.aml.model.PaginatedTransactions;
-import com.appopay.aml.model.TransactionDTO;
+import com.appopay.aml.model.transaction.TransactionDTO;
 import com.appopay.aml.model.transaction.RecordCustomerTrxReqDTO;
 import com.appopay.aml.model.transaction.RecordCustomerTrxResDTO;
 import com.appopay.aml.model.transaction.TransactionValidatorModel;

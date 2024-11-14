@@ -59,6 +59,11 @@ public class Merchant {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "merchant_id")
     private List<MerchantPEPFamily> pepFamilyDetails;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "mpa_id")
+    private MPADetails mpaDetails;
+
     @CreationTimestamp
     private Instant createdAt;
     @UpdateTimestamp

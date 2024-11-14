@@ -3,10 +3,7 @@ package com.appopay.aml.service;
 import com.appopay.aml.Exception.CustomException;
 import com.appopay.aml.entity.*;
 import com.appopay.aml.entity.Merchant;
-import com.appopay.aml.model.DeleteOption;
-import com.appopay.aml.model.MerchantDTO;
-import com.appopay.aml.model.PaginatedMerchant;
-import com.appopay.aml.model.UploadDocumentDTO;
+import com.appopay.aml.model.*;
 import com.appopay.aml.repository.CountryRiskConfigRepository;
 import com.appopay.aml.repository.MerchantRepository;
 import com.appopay.aml.util.RiskStatus;
@@ -278,6 +275,19 @@ public class MerchantService {
         } catch (Exception e) {
             throw new CustomException(e.toString());
         }
+    }
+
+    public Merchant updateToVIP(MPADetailsDTO mpaDetailsDTO) {
+        Optional<Merchant> optionalMerchant = merchantRepository.findById(mpaDetailsDTO.getMerchantId());
+        if (optionalMerchant.isEmpty()) {
+            throw new CustomException("merchant not found");
+        }
+        Merchant merchant = optionalMerchant.get();
+
+        merchant.setMpaDetails(mpaDetailsDTO.toEntity());
+        merchantRepository.save(merchant);
+        return merchant;
+
     }
 
 
