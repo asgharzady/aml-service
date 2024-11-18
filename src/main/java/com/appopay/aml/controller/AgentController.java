@@ -2,10 +2,8 @@ package com.appopay.aml.controller;
 
 
 import com.appopay.aml.entity.Agent;
-import com.appopay.aml.model.AgentDTO;
-import com.appopay.aml.model.DeleteOption;
-import com.appopay.aml.model.PaginatedAgent;
-import com.appopay.aml.model.UploadDocumentDTO;
+import com.appopay.aml.entity.Merchant;
+import com.appopay.aml.model.*;
 import com.appopay.aml.service.AgentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +68,12 @@ public class AgentController {
     public ResponseEntity<Void> clearField(@PathVariable Long id, @RequestParam DeleteOption fieldOption) {
         agentService.clearField(fieldOption,id);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/vip")
+    public ResponseEntity<Agent> updateFile(@RequestBody MPADetailsDTO mpaDetailsDTO) {
+        log.info("uptating vip agent with id: " + mpaDetailsDTO.getMpaId());
+        return ResponseEntity.ok(agentService.updateToVIP(mpaDetailsDTO));
     }
 
 

@@ -68,6 +68,10 @@ public class Agent {
     private String others1URL;
     private String others2URL;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "mpa_id")
+    private MPADetails mpaDetails;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "agent_beneficial_id") // Unique join column
     private List<Person> beneficialOweners;

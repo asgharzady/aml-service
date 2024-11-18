@@ -278,7 +278,7 @@ public class MerchantService {
     }
 
     public Merchant updateToVIP(MPADetailsDTO mpaDetailsDTO) {
-        Optional<Merchant> optionalMerchant = merchantRepository.findById(mpaDetailsDTO.getMerchantId());
+        Optional<Merchant> optionalMerchant = merchantRepository.findById(mpaDetailsDTO.getMpaId());
         if (optionalMerchant.isEmpty()) {
             throw new CustomException("merchant not found");
         }
@@ -287,7 +287,6 @@ public class MerchantService {
         merchant.setMpaDetails(mpaDetailsDTO.toEntity());
         merchantRepository.save(merchant);
         return merchant;
-
     }
 
 

@@ -1,6 +1,7 @@
 package com.appopay.aml.controller;
 
 
+import com.appopay.aml.entity.Merchant;
 import com.appopay.aml.entity.Partner;
 import com.appopay.aml.entity.Partner;
 import com.appopay.aml.model.*;
@@ -68,6 +69,12 @@ public class PartnerController {
     public ResponseEntity<Void> clearField(@PathVariable Long id, @RequestParam DeleteOption fieldOption) {
         partnerService.clearField(fieldOption,id);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/vip")
+    public ResponseEntity<Partner> updateFile(@RequestBody MPADetailsDTO mpaDetailsDTO) {
+        log.info("uptating vip partner with id: " + mpaDetailsDTO.getMpaId());
+        return ResponseEntity.ok(partnerService.updateToVIP(mpaDetailsDTO));
     }
 
 }

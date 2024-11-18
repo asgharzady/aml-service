@@ -68,6 +68,10 @@ public class Partner {
     private String others1URL;
     private String others2URL;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "mpa_id")
+    private MPADetails mpaDetails;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "partner_beneficial_id")
     private List<Person> beneficialOweners;

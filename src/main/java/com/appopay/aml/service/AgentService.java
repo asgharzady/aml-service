@@ -5,10 +5,7 @@ import com.appopay.aml.entity.Agent;
 import com.appopay.aml.entity.Agent;
 import com.appopay.aml.entity.Merchant;
 import com.appopay.aml.entity.Partner;
-import com.appopay.aml.model.AgentDTO;
-import com.appopay.aml.model.DeleteOption;
-import com.appopay.aml.model.PaginatedAgent;
-import com.appopay.aml.model.UploadDocumentDTO;
+import com.appopay.aml.model.*;
 import com.appopay.aml.repository.AgentRepository;
 import com.appopay.aml.util.RiskStatus;
 import org.slf4j.Logger;
@@ -269,5 +266,17 @@ public class AgentService {
         }
     }
 
+    public Agent updateToVIP(MPADetailsDTO mpaDetailsDTO) {
+        Optional<Agent> optionalAgent = agentRepository.findById(mpaDetailsDTO.getMpaId());
+        if (optionalAgent.isEmpty()) {
+            throw new CustomException("agent not found");
+        }
+        Agent agent = optionalAgent.get();
+
+        agent.setMpaDetails(mpaDetailsDTO.toEntity());
+        agentRepository.save(agent);
+        return agent;
+
+    }
 
 }

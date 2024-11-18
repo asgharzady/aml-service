@@ -1,13 +1,11 @@
 package com.appopay.aml.service;
 
 import com.appopay.aml.Exception.CustomException;
+import com.appopay.aml.entity.Partner;
 import com.appopay.aml.entity.Merchant;
 import com.appopay.aml.entity.Partner;
 import com.appopay.aml.entity.Partner;
-import com.appopay.aml.model.DeleteOption;
-import com.appopay.aml.model.PaginatedPartner;
-import com.appopay.aml.model.PartnerDTO;
-import com.appopay.aml.model.UploadDocumentDTO;
+import com.appopay.aml.model.*;
 import com.appopay.aml.repository.PartnerRepository;
 import com.appopay.aml.util.RiskStatus;
 import org.slf4j.Logger;
@@ -159,7 +157,7 @@ public class PartnerService {
 
         for (int i = 0; i < files.size(); i++) {
             String keyName = getFileHashName(files.get(i));
-            s3Service.uploadFile(files.get(i), "par"+keyName);
+            s3Service.uploadFile(files.get(i), "par" + keyName);
             String url = baseUrl + "par" + keyName;
 
             switch (urlNames.get(i)) {
@@ -271,6 +269,17 @@ public class PartnerService {
         } catch (Exception e) {
             throw new CustomException(e.toString());
         }
+    }
+
+    public Partner updateToVIP(MPADetailsDTO mpaDetailsDTO) {
+        Optional<Partner> optionalPartner = partnerRepository.findById(mpaDetailsDTO.getMpaId());
+        if (optionalPartner.isEmpty()) {
+            throw new CustomException("partner not found");
+        }
+        Partner partner = optionalPartner.get();
+        partner.setMpaDetails(mpaDetailsDTO.toEntity());
+        partnerRepository.save(partner);
+        return partner;
     }
 
 }

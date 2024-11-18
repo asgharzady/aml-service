@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 public class MPADetailsDTO {
 
-    long merchantId;
+    long mpaId;
     String businessName;
     String businessBranch;
     String businessBranchName;
