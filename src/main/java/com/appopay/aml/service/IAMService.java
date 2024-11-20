@@ -45,8 +45,10 @@ public class IAMService {
     public void login(LoginReqDTO request) {
         IAM checkExistingUser = iamRepository.findByUserName(request.getUserName());
         if (checkExistingUser == null) {
+            log.info("username not found for user: " + request.getUserName());
             throw new CustomException("username not found !");
         } else if (!passwordEncoder.matches(request.getPassword(), checkExistingUser.getPassword())) {
+            log.info("wrong password for user: " + request.getUserName());
             throw new CustomException("wrong password !");
         }
     }

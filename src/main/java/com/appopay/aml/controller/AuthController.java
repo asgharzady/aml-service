@@ -2,6 +2,7 @@ package com.appopay.aml.controller;
 
 
 import com.appopay.aml.util.JwtUtil;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,5 +24,27 @@ public class AuthController {
             return ResponseEntity.ok().body("Bearer " + token);
         }
         return ResponseEntity.status(401).body("Invalid username or password");
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return ResponseEntity.badRequest().body("Invalid Authorization header");
+        }
+
+        String oldToken = authorizationHeader.substring(7); // Remove "Bearer " prefix
+        String username;
+
+        try {
+            // Extract username even from expired tokens
+            username = jwtUtil.extractUsernameFromExpiredToken(oldToken);
+        } catch (JwtException | IllegalArgumentException e) {
+            return ResponseEntity.status(403).body("Invalid token");
+        }
+
+        // Generate a new token
+        String newToken = jwtUtil.generateToken(username);
+
+        return ResponseEntity.ok(newToken);
     }
 }
