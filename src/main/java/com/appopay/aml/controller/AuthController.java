@@ -3,6 +3,7 @@ package com.appopay.aml.controller;
 
 import com.appopay.aml.util.JwtUtil;
 import io.jsonwebtoken.JwtException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
     private final JwtUtil jwtUtil;
-    private static final String STATIC_USERNAME = "admin";
-    private static final String STATIC_PASSWORD = "password";
+    @Value("${static.username}")
+    private String STATIC_USERNAME;
+    @Value("${static.password}")
+    private String STATIC_PASSWORD;
 
     public AuthController(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
