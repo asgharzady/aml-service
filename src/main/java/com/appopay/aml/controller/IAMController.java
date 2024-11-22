@@ -36,11 +36,11 @@ public class IAMController {
     }
 
     @PutMapping
-    public ResponseEntity<IAM> updateUser(@RequestBody SignupReqDTO request){
+    public ResponseEntity<Void> updateUser(@RequestBody SignupReqDTO request){
         log.info("updating user: "+ request.getUsername());
-        IAM response = iamService.updateUser(request);
+        iamService.updateUser(request);
         log.info("returning ok for update user "+ request.getUsername());
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/findAll/{page}/{size}")

@@ -8,13 +8,14 @@ import com.appopay.aml.model.SignupReqDTO;
 import com.appopay.aml.repository.IAMRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class IAMService {
@@ -36,6 +37,7 @@ public class IAMService {
             IAM iam = new IAM();
             iam.setUserName(request.getUsername());
             iam.setPassword(passwordEncoder.encode(request.getPassword()));
+            iam.setPreviousPasswords(passwordEncoder.encode(request.getPassword()));
             iam.setDesignation(request.getDesignation());
             iam.setBlocked(false);
             iamRepository.save(iam);
@@ -53,7 +55,7 @@ public class IAMService {
         }
     }
 
-    public IAM updateUser(SignupReqDTO request) {
+    public void updateUser(SignupReqDTO request) {
         IAM checkExistingUser = iamRepository.findByUserName(request.getUsername());
         if (checkExistingUser == null) {
             throw new CustomException("username not found !");
@@ -65,24 +67,49 @@ public class IAMService {
                 checkExistingUser.setBlocked(request.getIsBlocked());
             }
             if (request.getPassword() != null) {
-                checkExistingUser.setPassword(passwordEncoder.encode(request.getPassword()));
+                String encodedNewPassword = passwordEncoder.encode(request.getPassword());
+                // Parse the stored string into a list of previous passwords
+                List<String> previousPasswords = new ArrayList<>();
+                if (checkExistingUser.getPreviousPasswords() != null && !checkExistingUser.getPreviousPasswords().isEmpty()) {
+                    previousPasswords = new ArrayList<>(Arrays.asList(checkExistingUser.getPreviousPasswords().split(",")));
+                }
+
+                // Check if the new password matches any of the previous passwords
+                if (previousPasswords.stream()
+                        .anyMatch(previousPassword -> passwordEncoder.matches(request.getPassword(), previousPassword))) {
+                    log.info("The new password cannot be one of the previous 3 passwords.");
+                    throw new CustomException("The new password cannot be one of the previous 3 passwords.");
+                }
+
+                // Update the password
+                checkExistingUser.setPassword(encodedNewPassword);
+
+                // Update the previous passwords list
+                if (previousPasswords.size() >= 4) {
+                    previousPasswords.remove(0);
+                }
+                previousPasswords.add(encodedNewPassword);
+
+                // Convert the updated list back to a comma-separated string
+                String updatedPreviousPasswords = String.join(",", previousPasswords);
+                checkExistingUser.setPreviousPasswords(updatedPreviousPasswords);
+
             }
             iamRepository.save(checkExistingUser);
-            return checkExistingUser;
         }
     }
 
-    public PaginatedUsers getAllPaginsated(Pageable pageable){
+    public PaginatedUsers getAllPaginsated(Pageable pageable) {
         PaginatedUsers response = new PaginatedUsers();
         response.setData(iamRepository.findAll(pageable).stream().toList());
         response.setTotalDocuments(iamRepository.count());
         return response;
     }
 
-    public IAM getByUsername(String username){
+    public IAM getByUsername(String username) {
         IAM iam = iamRepository.findByUserName(username);
 
-        if(iam == null){
+        if (iam == null) {
             throw new CustomException("username not found");
         }
 
