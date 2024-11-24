@@ -53,5 +53,11 @@ public class IAMController {
         return ResponseEntity.ok(iamService.getByUsername(username));
     }
 
+    @DeleteMapping("/{userName}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("userName") String userName) {
+        iamService.deleteUser(userName);
+        return ResponseEntity.ok().build();
+    }
+
 
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,6 +115,15 @@ public class IAMService {
         }
 
         return iam;
+    }
+
+    @Transactional
+    public Boolean deleteUser(String username) {
+        if (iamRepository.existsByUserName(username)) {
+            iamRepository.deleteByUserName(username);
+            return true;
+        }
+        throw new CustomException("username not found");
     }
 
 }
