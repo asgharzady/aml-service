@@ -37,7 +37,7 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
-    private CountryRiskConfigRepository countryRiskConfigRepository;
+    private MerchantService merchantService;
     @Autowired
     private TransactionRepository transactionRepository;
     @Autowired
@@ -103,7 +103,8 @@ public class CustomerService {
             return new ValidateRiskResV2DTO(false,customer.getId(),!customer.isBlocked());
         } else {
             boolean isBlocked = !ruleService.checkValidity(req);
-            customer = new Customers(req, null, isBlocked); // risk score is removed after rule config
+            String risk = merchantService.getRisk(req.getCountryOfOrigin());
+            customer = new Customers(req, risk, isBlocked); // risk score is removed after rule config
             customer = customerRepository.save(customer);
             return new ValidateRiskResV2DTO(true,customer.getId(),!isBlocked);
         }
