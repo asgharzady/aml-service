@@ -7,6 +7,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 public class SwaggerConfig {
@@ -20,6 +21,9 @@ public class SwaggerConfig {
                         .title("Appopay AML API")
                         .version("1.0")
                         .description("API documentation with JWT authentication"))
+                .addServersItem(new Server()
+                        .url("https://aml-backend.chenchenapp.com")
+                        .description("Production Server"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
                         .addSecuritySchemes(securitySchemeName,
