@@ -12,6 +12,7 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("https://aml.appopay.com")
                 .allowedOrigins("https://aml-backend.appopay.com")
+                .allowedOrigins("*")
 //                .allowedOrigins("https://aml-backend.chenchenapp.com")// Explicitly allow your Angular app's URL
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
