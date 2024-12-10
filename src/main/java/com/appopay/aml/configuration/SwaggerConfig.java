@@ -58,7 +58,7 @@ public class SwaggerConfig {
                         .version("1.0")
                         .description("API documentation with JWT authentication"))
                 .servers(List.of(
-                        new Server().url("https://aml-backend.appopay.com").description("Production Server")
+                        new Server().url("https://aml-backend.appopay.com").description("dev Server")
                 ))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
