@@ -15,7 +15,7 @@ public class CorsConfig implements WebMvcConfigurer {
 //                .allowedOrigins("https://aml-backend.appopay.com")
 //                .allowedOrigins("https://aml-backend.chenchenapp.com")// Explicitly allow your Angular app's URL
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
+                .allowedHeaders("*");
 //                .allowCredentials(true);  // If you're sending credentials like cookies or Authorization tokens
     }
 }
