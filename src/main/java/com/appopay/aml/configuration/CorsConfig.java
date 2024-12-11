@@ -13,7 +13,8 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "https://aml.appopay.com",
                         "https://aml-backend.appopay.com",
-                        "https://aml-backend.chenchenapp.com"
+                        "https://aml-backend.chenchenapp.com",
+                        "https://aml.chenchenapp.com"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
